@@ -27,7 +27,7 @@ const requireAuth = (role) => (req, res, next) => {
 
 // Home / Login
 app.get('/', (req, res) => {
-    res.render('login');
+    res.render('login', { error: null });
 });
 
 app.post('/login', (req, res) => {
