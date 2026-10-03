@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Management Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h2>Hostel Management Overview</h2>
+        <a href="/logout">Logout</a>
+    </div>
+    <div class="container">
+        <h3>Occupancy & Gender Policy Tracking</h3>
+        <table>
+            <tr><th>Room No</th><th>Floor</th><th>Gender Wing</th><th>Capacity</th><th>Current Occupants</th></tr>
+            <% rooms.forEach(r => { %>
+                <tr>
+                    <td><%= r.room_number %></td>
+                    <td><%= r.floor %></td>
+                    <td><%= r.gender_policy %></td>
+                    <td><%= r.capacity %></td>
+                    <td><%= r.current_occupants %> / <%= r.capacity %></td>
+                </tr>
+            <% }) %>
+        </table>
+
+        <hr>
+
+        <h3>Fee Management & Invoices</h3>
+        <table>
+            <tr><th>Student</th><th>Type</th><th>Amount</th><th>Due Date</th><th>Status</th></tr>
+            <% payments.forEach(p => { %>
+                <tr>
+                    <td><%= p.student_name %></td>
+                    <td><%= p.fee_type %></td>
+                    <td>₹<%= p.amount %></td>
+                    <td><%= p.due_date %></td>
+                    <td><span class="badge <%= p.status %>"><%= p.status %></span></td>
+                </tr>
+            <% }) %>
+        </table>
+
+        <hr>
+
+        <h3>Check In / Check Out Log</h3>
+        <table>
+            <tr><th>Student</th><th>Type</th><th>Key #</th><th>Timestamp</th><th>Remarks</th></tr>
+            <% logs.forEach(l => { %>
+                <tr>
+                    <td><%= l.student_name %></td>
+                    <td><%= l.type %></td>
+                    <td><%= l.key_number %></td>
+                    <td><%= l.timestamp %></td>
+                    <td><%= l.remarks %></td>
+                </tr>
+            <% }) %>
+        </table>
+
+        <hr>
+
+        <h3>Food & Weekly Menu Scheduler</h3>
+        <form action="/admin/update-menu" method="POST" style="display:flex; gap:10px;">
+            <select name="day" required>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+            </select>
+            <input type="text" name="breakfast" placeholder="Breakfast Menu" required>
+            <input type="text" name="lunch" placeholder="Lunch Menu" required>
+            <input type="text" name="dinner" placeholder="Dinner Menu" required>
+            <button type="submit">Update Menu</button>
+        </form>
+
+        <hr>
+
+        <h3>Complaints & Maintenance Requests</h3>
+        <table>
+            <tr><th>Student</th><th>Category</th><th>Description</th><th>Status</th><th>Action</th></tr>
+            <% complaints.forEach(c => { %>
+                <tr>
+                    <td><%= c.student_name %></td>
+                    <td><%= c.category %></td>
+                    <td><%= c.description %></td>
+                    <td><span class="badge <%= c.status.toLowerCase() %>"><%= c.status %></span></td>
+                    <td>
+                        <% if (c.status === 'pending') { %>
+                            <form action="/admin/resolve-complaint" method="POST" style="margin:0;">
+                                <input type="hidden" name="complaintId" value="<%= c.id %>">
+                                <button type="submit" style="padding: 4px 8px; font-size: 0.8em;">Mark Resolved</button>
+                            </form>
+                        <% } else { %>
+                            Resolved
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </table>
+    </div>
+</body>
+</html>

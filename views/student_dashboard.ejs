@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h2>Hostel Portal</h2>
+        <div>
+            <span style="margin-right: 15px; font-weight: 500;">Welcome, <%= user.name %> (<%= user.gender %>)</span>
+            <a href="/logout" class="btn-logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="grid">
+            <!-- Room Allocation -->
+            <div class="card">
+                <h3>Room Allocation</h3>
+                <% if (room) { %>
+                    <p style="margin-bottom: 1rem;"><strong>Room Number:</strong> Room <%= room.room_number %> (Floor <%= room.floor %>)</p>
+                    <form action="/student/leave-room" method="POST">
+                        <button type="submit" style="background-color: var(--danger);">Change / Leave Room</button>
+                    </form>
+                <% } else { %>
+                    <p style="margin-bottom: 1rem; color: var(--text-muted);">No room allocated yet.</p>
+                    <form action="/student/apply-room" method="POST">
+                        <select name="roomId" required>
+                            <option value="">Select an available room</option>
+                            <% availableRooms.forEach(r => { %>
+                                <option value="<%= r.id %>">Room <%= r.room_number %> (Floor <%= r.floor %> - <%= r.gender_policy %> Wing)</option>
+                            <% }) %>
+                        </select>
+                        <button type="submit">Apply for Room</button>
+                    </form>
+                <% } %>
+            </div>
+
+            <!-- Fee Management -->
+            <div class="card">
+                <h3>Fee Management</h3>
+                <% if (payments && payments.length > 0) { %>
+                    <% payments.forEach(p => { %>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0;">
+                            <div>
+                                <strong><%= p.fee_type %></strong><br>
+                                <small style="color: var(--text-muted);">Due: <%= p.due_date %></small>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 700; color: var(--primary);">₹<%= p.amount %></div>
+                                <span class="badge <%= p.status.toLowerCase() %>"><%= p.status %></span>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p style="color: var(--text-muted);">No pending fee invoices.</p>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Mess & Food Menu -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <h3>Mess & Food Menu</h3>
+            <p style="margin-bottom: 1rem; color: var(--text-muted);">
+                <strong>Dietary Preference:</strong> <%= user.dietary_pref %>
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Breakfast</th>
+                        <th>Lunch</th>
+                        <th>Dinner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% menu.forEach(m => { %>
+                        <tr>
+                            <td><strong><%= m.day %></strong></td>
+                            <td><%= m.breakfast %></td>
+                            <td><%= m.lunch %></td>
+                            <td><%= m.dinner %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="grid">
+            <!-- Key Operations -->
+            <div class="card">
+                <h3>Check-In / Check-Out Log</h3>
+                <form action="/student/check-in-out" method="POST" style="margin-bottom: 1rem;">
+                    <select name="type" required>
+                        <option value="Check-In">Check-In</option>
+                        <option value="Check-Out">Check-Out</option>
+                    </select>
+                    <input type="text" name="key_number" placeholder="Key Tag # (e.g. K-101)" required>
+                    <input type="text" name="remarks" placeholder="Remarks / Purpose">
+                    <button type="submit">Submit Entry</button>
+                </form>
+
+                <h4>Recent Entries</h4>
+                <table style="font-size: 0.85rem;">
+                    <tbody>
+                        <% logs.forEach(l => { %>
+                            <tr>
+                                <td><strong><%= l.type %></strong></td>
+                                <td>Key: <%= l.key_number %></td>
+                                <td style="color: var(--text-muted);"><%= l.timestamp %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Maintenance Complaints -->
+            <div class="card">
+                <h3>Maintenance Requests</h3>
+                <form action="/student/complaint" method="POST" style="margin-bottom: 1rem;">
+                    <select name="category">
+                        <option value="Plumbing">Plumbing</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Cleanliness">Cleanliness</option>
+                    </select>
+                    <textarea name="description" placeholder="Describe maintenance issue..." required rows="3"></textarea>
+                    <button type="submit">Submit Request</button>
+                </form>
+
+                <h4>Your Complaints</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% complaints.forEach(c => { %>
+                            <tr>
+                                <td><%= c.category %></td>
+                                <td><%= c.description %></td>
+                                <td><span class="badge <%= c.status.toLowerCase() %>"><%= c.status %></span></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
