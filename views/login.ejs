@@ -1,38 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Hostel Portal - Login & Registration</title>
-    <link rel="stylesheet" href="/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Portal Login & Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 { text-align: center; color: #4a40d4; margin-bottom: 20px; }
+        h3 { color: #111; margin-top: 25px; font-size: 1.1em; }
+        .error-msg { color: #d9534f; background: #f8d7da; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-bottom: 15px; text-align: center; }
+        .input-group { margin-bottom: 12px; }
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.95em;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4a40d4;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        button:hover { background-color: #3830b3; }
+        hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
+    </style>
 </head>
 <body>
-    <div class="auth-box">
+    <div class="card">
         <h2>Hostel Portal Login</h2>
-        <% if (error) { %><p style="color:red;"><%= error %></p><% } %>
+
+        <% if (error) { %>
+            <div class="error-msg"><%= error %></div>
+        <% } %>
+
+        <!-- Login Form -->
         <form action="/login" method="POST">
-            <input type="email" name="email" placeholder="Email Address" required>
-            <input type="password" name="password" placeholder="Password" required>
+            <div class="input-group">
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
             <button type="submit">Sign In</button>
         </form>
+
         <hr>
+
+        <!-- Student Registration Form -->
         <h3>Student Registration</h3>
         <form action="/register" method="POST">
-            <input type="text" name="name" placeholder="Full Name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <select name="gender" required>
-                <option value="">Select Gender</option>
-                <option value="Female">Female</option>
-                <option value="Male">Male</option>
-            </select>
-            <input type="text" name="course" placeholder="Course (e.g. B.Tech CSE)" required>
-            <input type="text" name="contact" placeholder="Contact Number" required>
-            <input type="text" name="id_proof" placeholder="ID Card / Verification No." required>
-            <select name="dietary_pref">
-                <option value="Vegetarian">Vegetarian</option>
-                <option value="Non-Vegetarian">Non-Vegetarian</option>
-                <option value="Vegan">Vegan</option>
-            </select>
-            <button type="submit" style="background:#2ecc71;">Register Profile</button>
+            <input type="hidden" name="role" value="student">
+            
+            <div class="input-group">
+                <input type="text" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-group">
+                <input type="email" name="email" placeholder="Email" required>
+            </div>
+            <div class="input-group">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <select name="gender" required>
+                    <option value="" disabled selected>Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <input type="text" name="course" placeholder="Course (e.g. B.Tech CSE)" required>
+            </div>
+            <div class="input-group">
+                <input type="tel" name="contact" placeholder="Contact Number" required>
+            </div>
+            <div class="input-group">
+                <input type="text" name="id_card" placeholder="ID Card / Verification No." required>
+            </div>
+            <div class="input-group">
+                <select name="diet" required>
+                    <option value="Vegetarian">Vegetarian</option>
+                    <option value="Non-Vegetarian">Non-Vegetarian</option>
+                </select>
+            </div>
+            <button type="submit">Register Profile</button>
         </form>
     </div>
 </body>

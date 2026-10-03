@@ -3,35 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Hostel Management</title>
+    <title>Registration Error</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; max-width: 350px; }
+        .error { color: #d9534f; font-weight: bold; margin-bottom: 15px; }
+        a { color: #4a40d4; text-decoration: none; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <h2>Register New Account</h2>
-    <% if (error) { %>
-        <p style="color: red;"><%= error %></p>
-    <% } %>
-    <form action="/register" method="POST">
-        <div>
-            <label>Full Name:</label>
-            <input type="text" name="name" required>
-        </div>
-        <div>
-            <label>Email:</label>
-            <input type="email" name="email" required>
-        </div>
-        <div>
-            <label>Password:</label>
-            <input type="password" name="password" required>
-        </div>
-        <div>
-            <label>Role:</label>
-            <select name="role">
-                <option value="student">Student</option>
-                <option value="admin">Admin</option>
-            </select>
-        </div>
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="/">Login here</a></p>
+    <div class="card">
+        <% if (error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
+        <p><a href="/">Back to Login & Registration</a></p>
+    </div>
 </body>
 </html>
