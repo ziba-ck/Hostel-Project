@@ -11,29 +11,27 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Create base table if missing
 db.serialize(() => {
+    // Create users table if missing
     db.run(`
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            role TEXT DEFAULT 'student'
+            role TEXT DEFAULT 'student',
+            gender TEXT,
+            course TEXT,
+            contact TEXT,
+            id_card TEXT,
+            diet TEXT
         )
     `);
 
-    // Safely add any missing columns if the table was created earlier
-    const columns = [
-        "ALTER TABLE users ADD COLUMN gender TEXT",
-        "ALTER TABLE users ADD COLUMN course TEXT",
-        "ALTER TABLE users ADD COLUMN contact TEXT",
-        "ALTER TABLE users ADD COLUMN id_card TEXT",
-        "ALTER TABLE users ADD COLUMN diet TEXT"
-    ];
-
-    columns.forEach((query) => {
-        db.run(query, (err) => {
+    // Safely add missing columns if an old table exists
+    const cols = ['gender', 'course', 'contact', 'id_card', 'diet'];
+    cols.forEach(col => {
+        db.run(`ALTER TABLE users ADD COLUMN ${col} TEXT`, () => {
             // Ignore error if column already exists
         });
     });

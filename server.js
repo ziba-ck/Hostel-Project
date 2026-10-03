@@ -33,8 +33,8 @@ app.post('/register', (req, res) => {
         [name, email, password, userRole, gender || '', course || '', contact || '', id_card || '', diet || ''],
         function (err) {
             if (err) {
-                console.error(err);
-                return res.render('register', { error: 'Email already registered or database error' });
+                console.error("REGISTER ERROR:", err.message);
+                return res.render('register', { error: err.message });
             }
             res.redirect('/?registered=true');
         }
