@@ -11,7 +11,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Create table with all student registration fields
+// Create base table if missing
 db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS users (
@@ -19,14 +19,24 @@ db.serialize(() => {
             name TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            role TEXT DEFAULT 'student',
-            gender TEXT,
-            course TEXT,
-            contact TEXT,
-            id_card TEXT,
-            diet TEXT
+            role TEXT DEFAULT 'student'
         )
     `);
+
+    // Safely add any missing columns if the table was created earlier
+    const columns = [
+        "ALTER TABLE users ADD COLUMN gender TEXT",
+        "ALTER TABLE users ADD COLUMN course TEXT",
+        "ALTER TABLE users ADD COLUMN contact TEXT",
+        "ALTER TABLE users ADD COLUMN id_card TEXT",
+        "ALTER TABLE users ADD COLUMN diet TEXT"
+    ];
+
+    columns.forEach((query) => {
+        db.run(query, (err) => {
+            // Ignore error if column already exists
+        });
+    });
 });
 
 module.exports = db;
