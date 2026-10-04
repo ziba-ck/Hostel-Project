@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-    secret: 'hostel_secret_key',
+    secret: 'hostel_oop_secret_key',
     resave: false,
     saveUninitialized: true
 }));
@@ -34,19 +34,18 @@ app.post('/register', (req, res) => {
 
     db.run(
         `INSERT INTO users (name, email, password, role, gender, course, contact, id_card, diet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [name, email, password, userRole, gender || '', course || '', contact || '', id_card || '', diet || ''],
+        [name, email, password, userRole, gender || '', course || '', contact || '', id_card || '', diet || 'Vegetarian'],
         function (err) {
             if (err) {
-                console.error("REGISTER ERROR:", err.message);
                 const errorMsg = err.message.includes('UNIQUE') 
-                    ? 'An account with this email address already exists. Please log in above.' 
+                    ? 'An account with this email address already exists.' 
                     : err.message;
                 return res.render('login', { error: errorMsg, success: null });
             }
             
             const userId = this.lastID;
-            // Default Room Allocation & Fee Entry upon registration
-            db.run(`INSERT INTO rooms (user_id, room_number, block) VALUES (?, '101', 'Block A')`, [userId]);
+            // Create default room and fee entries for new user
+            db.run(`INSERT INTO rooms (user_id, room_number, block) VALUES (?, '204', 'Block A')`, [userId]);
             db.run(`INSERT INTO fees (user_id, amount, status, due_date) VALUES (?, 5000, 'Pending', '2026-11-01')`, [userId]);
             
             res.redirect('/?registered=true');
@@ -54,7 +53,7 @@ app.post('/register', (req, res) => {
     );
 });
 
-// Login Route
+// Login
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
@@ -67,21 +66,27 @@ app.post('/login', (req, res) => {
     });
 });
 
-// Student Dashboard (Combines all 6 feature modules)
+// Dashboard Route (Aggregates all modules)
 app.get('/student', (req, res) => {
     if (!req.session.user) return res.redirect('/');
     const userId = req.session.user.id;
 
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const today = days[new Date().getDay()];
+
     db.get(`SELECT * FROM rooms WHERE user_id = ?`, [userId], (err, room) => {
         db.get(`SELECT * FROM fees WHERE user_id = ?`, [userId], (err, fee) => {
-            db.all(`SELECT * FROM complaints WHERE user_id = ?`, [userId], (err, complaints) => {
-                db.all(`SELECT * FROM logs WHERE user_id = ? ORDER BY timestamp DESC LIMIT 5`, [userId], (err, logs) => {
-                    res.render('student_dashboard', {
-                        user: req.session.user,
-                        room: room || { room_number: 'Unassigned', block: 'N/A', status: 'Pending' },
-                        fee: fee || { amount: 0, status: 'No Record', due_date: 'N/A' },
-                        complaints: complaints || [],
-                        logs: logs || []
+            db.get(`SELECT * FROM menu WHERE day = ?`, [today], (err, todaysMenu) => {
+                db.all(`SELECT * FROM complaints WHERE user_id = ? ORDER BY id DESC LIMIT 3`, [userId], (err, complaints) => {
+                    db.all(`SELECT * FROM logs WHERE user_id = ? ORDER BY id DESC LIMIT 4`, [userId], (err, logs) => {
+                        res.render('student_dashboard', {
+                            user: req.session.user,
+                            room: room || { room_number: '204', block: 'Block A', status: 'Allocated' },
+                            fee: fee || { amount: 5000, status: 'Pending', due_date: '2026-11-01' },
+                            menu: todaysMenu || { breakfast: 'Dosa', lunch: 'Meals', dinner: 'Chapati' },
+                            complaints: complaints || [],
+                            logs: logs || []
+                        });
                     });
                 });
             });
@@ -89,7 +94,7 @@ app.get('/student', (req, res) => {
     });
 });
 
-// File Complaint Route
+// Submit Complaint
 app.post('/complaint', (req, res) => {
     if (!req.session.user) return res.redirect('/');
     const { category, description } = req.body;
@@ -100,7 +105,7 @@ app.post('/complaint', (req, res) => {
     );
 });
 
-// Check-In / Check-Out Operations Route
+// Check-In / Check-Out Log
 app.post('/check-log', (req, res) => {
     if (!req.session.user) return res.redirect('/');
     const { action } = req.body;
@@ -109,13 +114,11 @@ app.post('/check-log', (req, res) => {
     });
 });
 
-// Logout Route
+// Logout
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

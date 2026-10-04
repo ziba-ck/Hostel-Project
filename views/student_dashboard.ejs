@@ -3,101 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hostel Management System Dashboard</title>
+    <title>Hostel Management Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
-        .dashboard-container { max-width: 900px; margin: 0 auto; }
-        .header { background: #ffffff; padding: 20px 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .header h2 { margin: 0; color: #4a40d4; }
-        .btn-logout { background: #d9534f; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-        .card { background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .card h3 { margin-top: 0; color: #4a40d4; border-bottom: 2px solid #f4f6f9; padding-bottom: 8px; font-size: 1.1em; }
-        .info-item { margin: 8px 0; font-size: 0.95em; }
-        .status-badge { display: inline-block; background: #e2f0d9; color: #385723; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 0.85em; }
-        input, select, textarea, button { width: 100%; margin-top: 8px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-        button { background: #4a40d4; color: white; font-weight: bold; cursor: pointer; border: none; }
-        button:hover { background: #3830b3; }
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --success-bg: #f0fdf4;
+            --warning: #d97706;
+            --warning-bg: #fffbeb;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); padding: 30px 20px; }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .header {
+            background: var(--card-bg);
+            padding: 24px 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .header h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
+        .header p { font-size: 0.875rem; color: var(--text-muted); margin-top: 4px; }
+
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: background 0.2s;
+        }
+        .btn-logout:hover { background: #dc2626; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .card-header h2 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .badge-success { background: var(--success-bg); color: var(--success); }
+        .badge-warning { background: var(--warning-bg); color: var(--warning); }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .info-label { color: var(--text-muted); font-weight: 500; }
+        .info-val { color: var(--text-main); font-weight: 600; }
+
+        form { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        
+        select, textarea, input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            outline: none;
+            background: #f8fafc;
+        }
+
+        select:focus, textarea:focus { border-color: var(--primary); background: #fff; }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover { background: var(--primary-hover); }
+
+        .log-list { margin-top: 12px; border-top: 1px dashed var(--border); padding-top: 10px; }
+        .log-item { font-size: 0.8rem; color: var(--text-muted); padding: 4px 0; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
 
-    <div class="dashboard-container">
+    <div class="container">
         <!-- Header -->
         <div class="header">
             <div>
-                <h2>Welcome, <%= user.name %>! 👋</h2>
-                <span style="color: #666; font-size: 0.9em;">OOP Hostel Management Portal</span>
+                <h1>Welcome, <%= user.name %>! 👋</h1>
+                <p>Hostel Management System Portal</p>
             </div>
             <a href="/logout" class="btn-logout">Logout</a>
         </div>
 
-        <!-- System Feature Grid -->
+        <!-- 6 Core Feature Grid -->
         <div class="grid">
-            <!-- Module 1: Student Registration Profile -->
+
+            <!-- 1. Student Profile -->
             <div class="card">
-                <h3>1. Student Profile</h3>
-                <div class="info-item"><strong>Email:</strong> <%= user.email %></div>
-                <div class="info-item"><strong>Course:</strong> <%= user.course %></div>
-                <div class="info-item"><strong>Contact:</strong> <%= user.contact %></div>
-                <div class="info-item"><strong>ID Verification:</strong> <%= user.id_card %></div>
+                <div>
+                    <div class="card-header">
+                        <h2>1. Student Profile</h2>
+                    </div>
+                    <div class="info-row"><span class="info-label">Email</span><span class="info-val"><%= user.email %></span></div>
+                    <div class="info-row"><span class="info-label">Course</span><span class="info-val"><%= user.course || 'B.Tech CSE' %></span></div>
+                    <div class="info-row"><span class="info-label">Contact</span><span class="info-val"><%= user.contact || 'N/A' %></span></div>
+                    <div class="info-row"><span class="info-label">ID Verification</span><span class="info-val"><%= user.id_card || 'Verified' %></span></div>
+                </div>
             </div>
 
-            <!-- Module 2: Room Allocation -->
+            <!-- 2. Room Allocation -->
             <div class="card">
-                <h3>2. Room Allocation</h3>
-                <div class="info-item"><strong>Room Status:</strong> <span class="status-badge"><%= room.status %></span></div>
-                <div class="info-item"><strong>Block / Wing:</strong> <%= room.block %></div>
-                <div class="info-item"><strong>Room Number:</strong> <%= room.room_number %></div>
+                <div>
+                    <div class="card-header">
+                        <h2>2. Room Allocation</h2>
+                        <span class="badge badge-success"><%= room.status %></span>
+                    </div>
+                    <div class="info-row"><span class="info-label">Block / Wing</span><span class="info-val"><%= room.block %></span></div>
+                    <div class="info-row"><span class="info-label">Room Number</span><span class="info-val"><%= room.room_number %></span></div>
+                </div>
             </div>
 
-            <!-- Module 3: Detailed Fee Management -->
+            <!-- 3. Fee Management -->
             <div class="card">
-                <h3>3. Fee Management</h3>
-                <div class="info-item"><strong>Hostel Fee:</strong> ₹<%= fee.amount %></div>
-                <div class="info-item"><strong>Payment Status:</strong> <%= fee.status %></div>
-                <div class="info-item"><strong>Due Date:</strong> <%= fee.due_date %></div>
+                <div>
+                    <div class="card-header">
+                        <h2>3. Fee Management</h2>
+                        <span class="badge badge-warning"><%= fee.status %></span>
+                    </div>
+                    <div class="info-row"><span class="info-label">Hostel Fee</span><span class="info-val">₹<%= fee.amount %></span></div>
+                    <div class="info-row"><span class="info-label">Due Date</span><span class="info-val"><%= fee.due_date %></span></div>
+                </div>
             </div>
 
-            <!-- Module 4: Food & Menu Management -->
+            <!-- 4. Food & Menu Management -->
             <div class="card">
-                <h3>4. Food & Menu</h3>
-                <div class="info-item"><strong>Diet Preference:</strong> <%= user.diet %></div>
-                <div class="info-item"><strong>Today's Menu:</strong> Special Dining Schedule</div>
+                <div>
+                    <div class="card-header">
+                        <h2>4. Food & Menu</h2>
+                    </div>
+                    <div class="info-row"><span class="info-label">Diet Choice</span><span class="info-val"><%= user.diet || 'Vegetarian' %></span></div>
+                    <div class="info-row"><span class="info-label">Breakfast</span><span class="info-val"><%= menu.breakfast %></span></div>
+                    <div class="info-row"><span class="info-label">Lunch</span><span class="info-val"><%= menu.lunch %></span></div>
+                    <div class="info-row"><span class="info-label">Dinner</span><span class="info-val"><%= menu.dinner %></span></div>
+                </div>
             </div>
 
-            <!-- Module 5: Complaints & Requests -->
+            <!-- 5. Complaints & Requests -->
             <div class="card">
-                <h3>5. Complaints & Requests</h3>
-                <form action="/complaint" method="POST">
-                    <select name="category" required>
-                        <option value="Maintenance">Maintenance / Repair</option>
-                        <option value="Cleanliness">Room Cleanliness</option>
-                        <option value="Wifi / Network">Wifi & Network</option>
-                    </select>
-                    <textarea name="description" placeholder="Describe the issue..." required rows="2"></textarea>
-                    <button type="submit">Submit Complaint</button>
-                </form>
+                <div>
+                    <div class="card-header">
+                        <h2>5. Complaints & Requests</h2>
+                    </div>
+                    <form action="/complaint" method="POST">
+                        <select name="category" required>
+                            <option value="Maintenance">Maintenance / Repair</option>
+                            <option value="Cleanliness">Room Cleanliness</option>
+                            <option value="Network">WiFi & Network</option>
+                        </select>
+                        <textarea name="description" rows="2" placeholder="Describe your request..." required></textarea>
+                        <button type="submit" class="btn-submit">Submit Request</button>
+                    </form>
+                </div>
+                <% if (complaints.length > 0) { %>
+                    <div class="log-list">
+                        <% complaints.forEach(item => { %>
+                            <div class="log-item">
+                                <span><strong><%= item.category %>:</strong> <%= item.description %></span>
+                                <span class="badge badge-warning"><%= item.status %></span>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } %>
             </div>
 
-            <!-- Module 6: Check-In / Check-Out Operations -->
+            <!-- 6. Check-In / Check-Out Log -->
             <div class="card">
-                <h3>6. Check-In / Out Log</h3>
-                <form action="/check-log" method="POST">
-                    <select name="action">
-                        <option value="Check-In">Check-In</option>
-                        <option value="Check-Out">Check-Out</option>
-                    </select>
-                    <button type="submit">Record Action</button>
-                </form>
-                <div style="margin-top: 10px; font-size: 0.85em;">
-                    <strong>Recent Logs:</strong>
+                <div>
+                    <div class="card-header">
+                        <h2>6. Check-In / Out Log</h2>
+                    </div>
+                    <form action="/check-log" method="POST">
+                        <select name="action">
+                            <option value="Check-In">Check-In</option>
+                            <option value="Check-Out">Check-Out</option>
+                        </select>
+                        <button type="submit" class="btn-submit">Record Action</button>
+                    </form>
+                </div>
+                <div class="log-list">
                     <% logs.forEach(log => { %>
-                        <div>• <%= log.action %> at <%= log.timestamp %></div>
+                        <div class="log-item">
+                            <span><%= log.action %></span>
+                            <span><%= log.timestamp %></span>
+                        </div>
                     <% }) %>
                 </div>
             </div>
+
         </div>
     </div>
 
