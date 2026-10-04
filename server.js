@@ -21,7 +21,10 @@ app.use(session({
 // Home Page (Login & Registration)
 app.get('/', (req, res) => {
     const registered = req.query.registered;
-    res.render('login', { error: null, success: registered ? 'Registration successful! Please login below.' : null });
+    res.render('login', { 
+        error: null, 
+        success: registered ? 'Registration successful! Please login below.' : null 
+    });
 });
 
 // Registration Route
@@ -35,7 +38,13 @@ app.post('/register', (req, res) => {
         function (err) {
             if (err) {
                 console.error("REGISTER ERROR:", err.message);
-                return res.render('register', { error: err.message });
+                
+                // Friendly inline error message instead of blank error screen
+                const errorMsg = err.message.includes('UNIQUE') 
+                    ? 'An account with this email address already exists. Please log in above.' 
+                    : err.message;
+
+                return res.render('login', { error: errorMsg, success: null });
             }
             res.redirect('/?registered=true');
         }
