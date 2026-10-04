@@ -5,48 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hostel Portal Login & Registration</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-        .card {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .card { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); width: 100%; max-width: 400px; }
         h2 { text-align: center; color: #4a40d4; margin-bottom: 20px; }
         h3 { color: #111; margin-top: 25px; font-size: 1.1em; }
         .error-msg { color: #d9534f; background: #f8d7da; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-bottom: 15px; text-align: center; }
+        .success-msg { color: #155724; background: #d4edda; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-bottom: 15px; text-align: center; }
         .input-group { margin-bottom: 12px; }
-        input, select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 0.95em;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4a40d4;
-            border: none;
-            color: white;
-            border-radius: 6px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 8px;
-        }
+        input, select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 0.95em; }
+        button { width: 100%; padding: 12px; background-color: #4a40d4; border: none; color: white; border-radius: 6px; font-size: 1em; font-weight: bold; cursor: pointer; margin-top: 8px; }
         button:hover { background-color: #3830b3; }
         hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
     </style>
@@ -55,8 +22,12 @@
     <div class="card">
         <h2>Hostel Portal Login</h2>
 
-        <% if (error) { %>
+        <% if (locals.error && error) { %>
             <div class="error-msg"><%= error %></div>
+        <% } %>
+
+        <% if (locals.success && success) { %>
+            <div class="success-msg"><%= success %></div>
         <% } %>
 
         <!-- Login Form -->
@@ -76,7 +47,6 @@
         <h3>Student Registration</h3>
         <form action="/register" method="POST">
             <input type="hidden" name="role" value="student">
-            
             <div class="input-group">
                 <input type="text" name="name" placeholder="Full Name" required>
             </div>

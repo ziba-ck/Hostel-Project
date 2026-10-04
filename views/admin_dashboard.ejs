@@ -1,104 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Admin Management Dashboard</title>
-    <link rel="stylesheet" href="/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; padding: 20px; margin: 0; }
+        .container { background: white; padding: 25px; border-radius: 10px; max-width: 800px; margin: 20px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #4a40d4; color: white; }
+        .btn-logout { display: inline-block; margin-top: 15px; padding: 8px 15px; background: #d9534f; color: white; border-radius: 6px; text-decoration: none; }
+    </style>
 </head>
 <body>
-    <div class="navbar">
-        <h2>Hostel Management Overview</h2>
-        <a href="/logout">Logout</a>
-    </div>
     <div class="container">
-        <h3>Occupancy & Gender Policy Tracking</h3>
+        <h2>Admin Dashboard - Registered Students</h2>
         <table>
-            <tr><th>Room No</th><th>Floor</th><th>Gender Wing</th><th>Capacity</th><th>Current Occupants</th></tr>
-            <% rooms.forEach(r => { %>
+            <thead>
                 <tr>
-                    <td><%= r.room_number %></td>
-                    <td><%= r.floor %></td>
-                    <td><%= r.gender_policy %></td>
-                    <td><%= r.capacity %></td>
-                    <td><%= r.current_occupants %> / <%= r.capacity %></td>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Course</th>
+                    <th>Contact</th>
+                    <th>Diet</th>
                 </tr>
-            <% }) %>
+            </thead>
+            <tbody>
+                <% students.forEach(student => { %>
+                    <tr>
+                        <td><%= student.name %></td>
+                        <td><%= student.email %></td>
+                        <td><%= student.course %></td>
+                        <td><%= student.contact %></td>
+                        <td><%= student.diet %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
         </table>
-
-        <hr>
-
-        <h3>Fee Management & Invoices</h3>
-        <table>
-            <tr><th>Student</th><th>Type</th><th>Amount</th><th>Due Date</th><th>Status</th></tr>
-            <% payments.forEach(p => { %>
-                <tr>
-                    <td><%= p.student_name %></td>
-                    <td><%= p.fee_type %></td>
-                    <td>₹<%= p.amount %></td>
-                    <td><%= p.due_date %></td>
-                    <td><span class="badge <%= p.status %>"><%= p.status %></span></td>
-                </tr>
-            <% }) %>
-        </table>
-
-        <hr>
-
-        <h3>Check In / Check Out Log</h3>
-        <table>
-            <tr><th>Student</th><th>Type</th><th>Key #</th><th>Timestamp</th><th>Remarks</th></tr>
-            <% logs.forEach(l => { %>
-                <tr>
-                    <td><%= l.student_name %></td>
-                    <td><%= l.type %></td>
-                    <td><%= l.key_number %></td>
-                    <td><%= l.timestamp %></td>
-                    <td><%= l.remarks %></td>
-                </tr>
-            <% }) %>
-        </table>
-
-        <hr>
-
-        <h3>Food & Weekly Menu Scheduler</h3>
-        <form action="/admin/update-menu" method="POST" style="display:flex; gap:10px;">
-            <select name="day" required>
-                <option value="Monday">Monday</option>
-                <option value="Tuesday">Tuesday</option>
-                <option value="Wednesday">Wednesday</option>
-                <option value="Thursday">Thursday</option>
-                <option value="Friday">Friday</option>
-                <option value="Saturday">Saturday</option>
-                <option value="Sunday">Sunday</option>
-            </select>
-            <input type="text" name="breakfast" placeholder="Breakfast Menu" required>
-            <input type="text" name="lunch" placeholder="Lunch Menu" required>
-            <input type="text" name="dinner" placeholder="Dinner Menu" required>
-            <button type="submit">Update Menu</button>
-        </form>
-
-        <hr>
-
-        <h3>Complaints & Maintenance Requests</h3>
-        <table>
-            <tr><th>Student</th><th>Category</th><th>Description</th><th>Status</th><th>Action</th></tr>
-            <% complaints.forEach(c => { %>
-                <tr>
-                    <td><%= c.student_name %></td>
-                    <td><%= c.category %></td>
-                    <td><%= c.description %></td>
-                    <td><span class="badge <%= c.status.toLowerCase() %>"><%= c.status %></span></td>
-                    <td>
-                        <% if (c.status === 'pending') { %>
-                            <form action="/admin/resolve-complaint" method="POST" style="margin:0;">
-                                <input type="hidden" name="complaintId" value="<%= c.id %>">
-                                <button type="submit" style="padding: 4px 8px; font-size: 0.8em;">Mark Resolved</button>
-                            </form>
-                        <% } else { %>
-                            Resolved
-                        <% } %>
-                    </td>
-                </tr>
-            <% }) %>
-        </table>
+        <a href="/logout" class="btn-logout">Logout</a>
     </div>
 </body>
 </html>

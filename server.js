@@ -20,7 +20,8 @@ app.use(session({
 
 // Home Page (Login & Registration)
 app.get('/', (req, res) => {
-    res.render('login', { error: null });
+    const registered = req.query.registered;
+    res.render('login', { error: null, success: registered ? 'Registration successful! Please login below.' : null });
 });
 
 // Registration Route
@@ -47,7 +48,7 @@ app.post('/login', (req, res) => {
 
     db.get(`SELECT * FROM users WHERE email = ? AND password = ?`, [email, password], (err, user) => {
         if (err || !user) {
-            return res.render('login', { error: 'Invalid email or password' });
+            return res.render('login', { error: 'Invalid email or password', success: null });
         }
         req.session.user = user;
         if (user.role === 'admin') {
