@@ -3,25 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
+    <title>Student Dashboard - Hostel Portal</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f6f9; padding: 20px; margin: 0; }
-        .card { background: white; padding: 25px; border-radius: 10px; max-width: 500px; margin: 30px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h2 { color: #4a40d4; margin-top: 0; }
-        .info { margin: 10px 0; font-size: 1.05em; }
-        .btn-logout { display: inline-block; margin-top: 20px; padding: 10px 18px; background: #d9534f; color: white; border-radius: 6px; text-decoration: none; font-weight: bold; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        .dashboard-container { max-width: 800px; margin: 0 auto; }
+        
+        .header { background: #ffffff; padding: 20px 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header h2 { margin: 0; color: #4a40d4; }
+        .btn-logout { background: #d9534f; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9em; }
+        .btn-logout:hover { background: #c9302c; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .card { background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .card h3 { margin-top: 0; color: #4a40d4; border-bottom: 2px solid #f4f6f9; padding-bottom: 8px; font-size: 1.1em; }
+        .info-item { margin: 10px 0; font-size: 0.95em; }
+        .info-item strong { color: #555; }
+        
+        .status-badge { display: inline-block; background: #e2f0d9; color: #385723; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85em; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>Welcome, <%= user.name %>! 👋</h2>
-        <p class="info"><strong>Email:</strong> <%= user.email %></p>
-        <p class="info"><strong>Course:</strong> <%= user.course || 'N/A' %></p>
-        <p class="info"><strong>Contact:</strong> <%= user.contact || 'N/A' %></p>
-        <p class="info"><strong>ID Card / Ver. No:</strong> <%= user.id_card || 'N/A' %></p>
-        <p class="info"><strong>Diet Preference:</strong> <%= user.diet || 'N/A' %></p>
-        
-        <a href="/logout" class="btn-logout">Logout</a>
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h2>Welcome, <%= user.name %>! 👋</h2>
+                <span style="color: #666; font-size: 0.9em;">Student Hostel Dashboard</span>
+            </div>
+            <a href="/logout" class="btn-logout">Logout</a>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="grid">
+            <!-- Profile Details -->
+            <div class="card">
+                <h3>Profile Details</h3>
+                <div class="info-item"><strong>Email:</strong> <%= user.email %></div>
+                <div class="info-item"><strong>Course:</strong> <%= user.course || 'N/A' %></div>
+                <div class="info-item"><strong>Contact:</strong> <%= user.contact || 'N/A' %></div>
+                <div class="info-item"><strong>ID / Ver. No:</strong> <%= user.id_card || 'N/A' %></div>
+            </div>
+
+            <!-- Hostel & Room Allocation -->
+            <div class="card">
+                <h3>Room Details</h3>
+                <div class="info-item"><strong>Room Status:</strong> <span class="status-badge">Allocated</span></div>
+                <div class="info-item"><strong>Block / Wing:</strong> Block A</div>
+                <div class="info-item"><strong>Room Number:</strong> 204</div>
+                <div class="info-item"><strong>Diet Choice:</strong> <%= user.diet || 'N/A' %></div>
+            </div>
+
+            <!-- Mess & Fee Details -->
+            <div class="card">
+                <h3>Fee & Mess Status</h3>
+                <div class="info-item"><strong>Hostel Fee:</strong> <span class="status-badge">Paid</span></div>
+                <div class="info-item"><strong>Monthly Mess Bill:</strong> Pending</div>
+                <div class="info-item"><strong>Mess Menu:</strong> <%= user.diet === 'Vegetarian' ? 'Veg Special' : 'Non-Veg Regular' %></div>
+            </div>
+        </div>
     </div>
+
 </body>
 </html>
