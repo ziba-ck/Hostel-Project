@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard - Hostel Portal</title>
+    <title>Hostel Management System Dashboard</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
-        .dashboard-container { max-width: 800px; margin: 0 auto; }
-        
+        .dashboard-container { max-width: 900px; margin: 0 auto; }
         .header { background: #ffffff; padding: 20px 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .header h2 { margin: 0; color: #4a40d4; }
-        .btn-logout { background: #d9534f; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9em; }
-        .btn-logout:hover { background: #c9302c; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .btn-logout { background: #d9534f; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
         .card { background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .card h3 { margin-top: 0; color: #4a40d4; border-bottom: 2px solid #f4f6f9; padding-bottom: 8px; font-size: 1.1em; }
-        .info-item { margin: 10px 0; font-size: 0.95em; }
-        .info-item strong { color: #555; }
-        
-        .status-badge { display: inline-block; background: #e2f0d9; color: #385723; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85em; }
+        .info-item { margin: 8px 0; font-size: 0.95em; }
+        .status-badge { display: inline-block; background: #e2f0d9; color: #385723; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 0.85em; }
+        input, select, textarea, button { width: 100%; margin-top: 8px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+        button { background: #4a40d4; color: white; font-weight: bold; cursor: pointer; border: none; }
+        button:hover { background: #3830b3; }
     </style>
 </head>
 <body>
@@ -30,37 +28,75 @@
         <div class="header">
             <div>
                 <h2>Welcome, <%= user.name %>! 👋</h2>
-                <span style="color: #666; font-size: 0.9em;">Student Hostel Dashboard</span>
+                <span style="color: #666; font-size: 0.9em;">OOP Hostel Management Portal</span>
             </div>
             <a href="/logout" class="btn-logout">Logout</a>
         </div>
 
-        <!-- Dashboard Grid -->
+        <!-- System Feature Grid -->
         <div class="grid">
-            <!-- Profile Details -->
+            <!-- Module 1: Student Registration Profile -->
             <div class="card">
-                <h3>Profile Details</h3>
+                <h3>1. Student Profile</h3>
                 <div class="info-item"><strong>Email:</strong> <%= user.email %></div>
-                <div class="info-item"><strong>Course:</strong> <%= user.course || 'N/A' %></div>
-                <div class="info-item"><strong>Contact:</strong> <%= user.contact || 'N/A' %></div>
-                <div class="info-item"><strong>ID / Ver. No:</strong> <%= user.id_card || 'N/A' %></div>
+                <div class="info-item"><strong>Course:</strong> <%= user.course %></div>
+                <div class="info-item"><strong>Contact:</strong> <%= user.contact %></div>
+                <div class="info-item"><strong>ID Verification:</strong> <%= user.id_card %></div>
             </div>
 
-            <!-- Hostel & Room Allocation -->
+            <!-- Module 2: Room Allocation -->
             <div class="card">
-                <h3>Room Details</h3>
-                <div class="info-item"><strong>Room Status:</strong> <span class="status-badge">Allocated</span></div>
-                <div class="info-item"><strong>Block / Wing:</strong> Block A</div>
-                <div class="info-item"><strong>Room Number:</strong> 204</div>
-                <div class="info-item"><strong>Diet Choice:</strong> <%= user.diet || 'N/A' %></div>
+                <h3>2. Room Allocation</h3>
+                <div class="info-item"><strong>Room Status:</strong> <span class="status-badge"><%= room.status %></span></div>
+                <div class="info-item"><strong>Block / Wing:</strong> <%= room.block %></div>
+                <div class="info-item"><strong>Room Number:</strong> <%= room.room_number %></div>
             </div>
 
-            <!-- Mess & Fee Details -->
+            <!-- Module 3: Detailed Fee Management -->
             <div class="card">
-                <h3>Fee & Mess Status</h3>
-                <div class="info-item"><strong>Hostel Fee:</strong> <span class="status-badge">Paid</span></div>
-                <div class="info-item"><strong>Monthly Mess Bill:</strong> Pending</div>
-                <div class="info-item"><strong>Mess Menu:</strong> <%= user.diet === 'Vegetarian' ? 'Veg Special' : 'Non-Veg Regular' %></div>
+                <h3>3. Fee Management</h3>
+                <div class="info-item"><strong>Hostel Fee:</strong> ₹<%= fee.amount %></div>
+                <div class="info-item"><strong>Payment Status:</strong> <%= fee.status %></div>
+                <div class="info-item"><strong>Due Date:</strong> <%= fee.due_date %></div>
+            </div>
+
+            <!-- Module 4: Food & Menu Management -->
+            <div class="card">
+                <h3>4. Food & Menu</h3>
+                <div class="info-item"><strong>Diet Preference:</strong> <%= user.diet %></div>
+                <div class="info-item"><strong>Today's Menu:</strong> Special Dining Schedule</div>
+            </div>
+
+            <!-- Module 5: Complaints & Requests -->
+            <div class="card">
+                <h3>5. Complaints & Requests</h3>
+                <form action="/complaint" method="POST">
+                    <select name="category" required>
+                        <option value="Maintenance">Maintenance / Repair</option>
+                        <option value="Cleanliness">Room Cleanliness</option>
+                        <option value="Wifi / Network">Wifi & Network</option>
+                    </select>
+                    <textarea name="description" placeholder="Describe the issue..." required rows="2"></textarea>
+                    <button type="submit">Submit Complaint</button>
+                </form>
+            </div>
+
+            <!-- Module 6: Check-In / Check-Out Operations -->
+            <div class="card">
+                <h3>6. Check-In / Out Log</h3>
+                <form action="/check-log" method="POST">
+                    <select name="action">
+                        <option value="Check-In">Check-In</option>
+                        <option value="Check-Out">Check-Out</option>
+                    </select>
+                    <button type="submit">Record Action</button>
+                </form>
+                <div style="margin-top: 10px; font-size: 0.85em;">
+                    <strong>Recent Logs:</strong>
+                    <% logs.forEach(log => { %>
+                        <div>• <%= log.action %> at <%= log.timestamp %></div>
+                    <% }) %>
+                </div>
             </div>
         </div>
     </div>

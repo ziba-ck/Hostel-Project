@@ -18,7 +18,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// Home Page (Login & Registration)
+// Home Page
 app.get('/', (req, res) => {
     const registered = req.query.registered;
     res.render('login', { 
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// Registration Route
+// Student Registration
 app.post('/register', (req, res) => {
     const { name, email, password, gender, course, contact, id_card, diet, role } = req.body;
     const userRole = role || 'student';
@@ -38,14 +38,17 @@ app.post('/register', (req, res) => {
         function (err) {
             if (err) {
                 console.error("REGISTER ERROR:", err.message);
-                
-                // Friendly inline error message instead of blank error screen
                 const errorMsg = err.message.includes('UNIQUE') 
                     ? 'An account with this email address already exists. Please log in above.' 
                     : err.message;
-
                 return res.render('login', { error: errorMsg, success: null });
             }
+            
+            const userId = this.lastID;
+            // Default Room Allocation & Fee Entry upon registration
+            db.run(`INSERT INTO rooms (user_id, room_number, block) VALUES (?, '101', 'Block A')`, [userId]);
+            db.run(`INSERT INTO fees (user_id, amount, status, due_date) VALUES (?, 5000, 'Pending', '2026-11-01')`, [userId]);
+            
             res.redirect('/?registered=true');
         }
     );
@@ -60,25 +63,49 @@ app.post('/login', (req, res) => {
             return res.render('login', { error: 'Invalid email or password', success: null });
         }
         req.session.user = user;
-        if (user.role === 'admin') {
-            res.redirect('/admin');
-        } else {
-            res.redirect('/student');
-        }
+        res.redirect('/student');
     });
 });
 
-// Student Dashboard Route
+// Student Dashboard (Combines all 6 feature modules)
 app.get('/student', (req, res) => {
     if (!req.session.user) return res.redirect('/');
-    res.render('student_dashboard', { user: req.session.user });
+    const userId = req.session.user.id;
+
+    db.get(`SELECT * FROM rooms WHERE user_id = ?`, [userId], (err, room) => {
+        db.get(`SELECT * FROM fees WHERE user_id = ?`, [userId], (err, fee) => {
+            db.all(`SELECT * FROM complaints WHERE user_id = ?`, [userId], (err, complaints) => {
+                db.all(`SELECT * FROM logs WHERE user_id = ? ORDER BY timestamp DESC LIMIT 5`, [userId], (err, logs) => {
+                    res.render('student_dashboard', {
+                        user: req.session.user,
+                        room: room || { room_number: 'Unassigned', block: 'N/A', status: 'Pending' },
+                        fee: fee || { amount: 0, status: 'No Record', due_date: 'N/A' },
+                        complaints: complaints || [],
+                        logs: logs || []
+                    });
+                });
+            });
+        });
+    });
 });
 
-// Admin Dashboard Route
-app.get('/admin', (req, res) => {
-    if (!req.session.user || req.session.user.role !== 'admin') return res.redirect('/');
-    db.all(`SELECT * FROM users WHERE role = 'student'`, [], (err, students) => {
-        res.render('admin_dashboard', { students: students || [] });
+// File Complaint Route
+app.post('/complaint', (req, res) => {
+    if (!req.session.user) return res.redirect('/');
+    const { category, description } = req.body;
+    db.run(`INSERT INTO complaints (user_id, category, description) VALUES (?, ?, ?)`, 
+        [req.session.user.id, category, description], () => {
+            res.redirect('/student');
+        }
+    );
+});
+
+// Check-In / Check-Out Operations Route
+app.post('/check-log', (req, res) => {
+    if (!req.session.user) return res.redirect('/');
+    const { action } = req.body;
+    db.run(`INSERT INTO logs (user_id, action) VALUES (?, ?)`, [req.session.user.id, action], () => {
+        res.redirect('/student');
     });
 });
 
