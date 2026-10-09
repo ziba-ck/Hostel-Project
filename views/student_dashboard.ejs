@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HostelHub - Student Dashboard</title>
+    <title>HostelHub - Advanced AI Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --bg-space: #030712;
             --purple-glow: #6366f1;
             --blue-gradient: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
-            --card-glass: rgba(15, 23, 42, 0.7);
+            --card-glass: rgba(15, 23, 42, 0.75);
             --border-glass: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
@@ -22,20 +23,35 @@
         body {
             background-color: var(--bg-space);
             background-image: 
-                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.18) 0%, transparent 50%),
+                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
                 radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
             color: var(--text-main);
-            padding: 30px 20px;
+            padding: 20px;
             min-height: 100vh;
         }
 
-        .container { max-width: 1100px; margin: 0 auto; }
+        .container { max-width: 1150px; margin: 0 auto; }
+
+        /* Notice Ticker Bar */
+        .ticker-bar {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+        .ticker-text { color: #a5b4fc; display: flex; align-items: center; gap: 8px; }
+        .btn-sos { background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 800; cursor: pointer; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
         /* Header */
         .header {
             background: var(--card-glass);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             padding: 20px 28px;
             border-radius: 20px;
             border: 1px solid var(--border-glass);
@@ -43,37 +59,16 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
 
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: var(--blue-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .header p { font-size: 0.85rem; color: var(--text-sub); margin-top: 2px; }
-
-        .btn-logout {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            padding: 10px 22px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.85rem;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-            transition: all 0.2s;
-        }
-        .btn-logout:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); }
+        .header h1 { font-size: 1.5rem; font-weight: 800; background: var(--blue-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { font-size: 0.85rem; color: var(--text-sub); }
+        .btn-logout { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 10px 20px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 0.85rem; }
 
         /* AI Banner */
         .glass-ai-banner {
             background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 24px;
             padding: 24px 32px;
@@ -81,116 +76,94 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
         }
 
-        .ai-content h2 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #c084fc, #38bdf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .ai-content h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; background: linear-gradient(135deg, #c084fc, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .ai-content p { font-size: 0.9rem; color: var(--text-sub); max-width: 480px; }
 
-        .ai-content p { font-size: 0.9rem; color: var(--text-sub); max-width: 480px; line-height: 1.6; }
+        .ai-orb-wrapper { position: relative; width: 140px; height: 140px; cursor: pointer; }
+        #glass-ai-canvas { width: 140px; height: 140px; filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.5)); }
 
-        .ai-orb-wrapper {
-            position: relative;
-            width: 140px;
-            height: 140px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        #glass-ai-canvas {
-            width: 140px;
-            height: 140px;
-            filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.5));
-        }
-
-        /* Cards Grid */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; }
+        /* Grid Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 22px; }
 
         .card {
             background: var(--card-glass);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 24px;
             border: 1px solid var(--border-glass);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: all 0.2s;
-        }
-        .card:hover { transform: translateY(-3px); border-color: rgba(129, 140, 248, 0.3); }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-glass);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
         }
 
+        .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px; }
         .card-header h3 { font-size: 1.05rem; font-weight: 700; color: #a5b4fc; }
 
-        .badge {
-            font-size: 0.75rem;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
+        .badge { font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; font-weight: 700; }
         .badge-success { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
         .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
 
-        .info-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 12px; }
+        .info-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 10px; }
         .info-label { color: var(--text-sub); }
         .info-val { color: var(--text-main); font-weight: 600; }
 
+        /* 3D Room Viewer Canvas */
+        #room-3d-canvas { width: 100%; height: 140px; border-radius: 12px; margin-top: 10px; background: rgba(3, 7, 18, 0.5); }
+
+        /* Menu Tabs */
+        .menu-tabs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 12px; padding-bottom: 4px; }
+        .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: var(--text-sub); padding: 5px 10px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; }
+        .tab-btn.active { background: #6366f1; color: white; font-weight: bold; }
+
+        /* QR Code Container */
+        .qr-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; margin-top: 10px; }
+        #qrcode img { border-radius: 8px; padding: 6px; background: #fff; }
+
         form { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        select, textarea, input { width: 100%; padding: 10px 14px; border: 1px solid var(--border-glass); border-radius: 12px; font-size: 0.85rem; background: rgba(3, 7, 18, 0.7); color: #fff; outline: none; }
+        .btn-action { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; }
 
-        select, textarea, input {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid var(--border-glass);
-            border-radius: 12px;
-            font-size: 0.85rem;
-            background: rgba(3, 7, 18, 0.7);
-            color: #fff;
-            outline: none;
-            transition: all 0.2s;
+        /* Floating AI Chat Modal */
+        .chat-drawer {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 340px;
+            height: 420px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            overflow: hidden;
         }
-        select:focus, textarea:focus { border-color: #818cf8; box-shadow: 0 0 10px rgba(99, 102, 241, 0.3); }
 
-        .btn-action {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-            transition: all 0.2s;
-        }
-        .btn-action:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5); }
-
-        .log-list { margin-top: 12px; border-top: 1px dashed var(--border-glass); padding-top: 10px; }
-        .log-item { font-size: 0.8rem; color: var(--text-sub); padding: 5px 0; display: flex; justify-content: space-between; }
+        .chat-header { background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+        .chat-body { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; }
+        .msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; line-height: 1.4; }
+        .msg-bot { background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.3); color: #e0e7ff; align-self: flex-start; }
+        .msg-user { background: #4f46e5; color: white; align-self: flex-end; }
+        .chat-input { display: flex; padding: 10px; background: rgba(3, 7, 18, 0.8); gap: 6px; }
+        .chat-input input { flex: 1; padding: 8px 12px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <!-- Live Ticker & SOS -->
+        <div class="ticker-bar">
+            <div class="ticker-text">
+                <span>📢 <strong>NOTICE:</strong> Mess Bill due date extended to Nov 1st. High-speed WiFi upgrades completed in Block A.</span>
+            </div>
+            <button class="btn-sos" onclick="triggerSOS()">🚨 Emergency SOS</button>
+        </div>
+
         <!-- Header -->
         <div class="header">
             <div>
@@ -200,18 +173,18 @@
             <a href="/logout" class="btn-logout">Logout</a>
         </div>
 
-        <!-- 3D AI Banner -->
+        <!-- AI Banner -->
         <div class="glass-ai-banner">
             <div class="ai-content">
                 <h2>AI Assistant & Smart Operations</h2>
-                <p>Click the 3D Orbiting Sphere to check real-time hostel verification, mess schedules, and automated balance checks.</p>
+                <p>Click the 3D Orbiting Sphere to open your AI Assistant drawer for instant questions about fees, menus, and rooms.</p>
             </div>
             <div class="ai-orb-wrapper" id="ai-orb-btn">
                 <canvas id="glass-ai-canvas"></canvas>
             </div>
         </div>
 
-        <!-- 6 Core Feature Grid -->
+        <!-- 6 Feature Grid -->
         <div class="grid">
 
             <!-- 1. Student Profile -->
@@ -225,7 +198,7 @@
                 </div>
             </div>
 
-            <!-- 2. Room Allocation -->
+            <!-- 2. Room Allocation with 3D Explorer -->
             <div class="card">
                 <div>
                     <div class="card-header">
@@ -234,6 +207,7 @@
                     </div>
                     <div class="info-row"><span class="info-label">Block / Wing</span><span class="info-val"><%= room.block %></span></div>
                     <div class="info-row"><span class="info-label">Room Number</span><span class="info-val"><%= room.room_number %></span></div>
+                    <canvas id="room-3d-canvas"></canvas>
                 </div>
             </div>
 
@@ -249,14 +223,20 @@
                 </div>
             </div>
 
-            <!-- 4. Food & Menu Management -->
+            <!-- 4. Weekly Food & Menu Tabs -->
             <div class="card">
                 <div>
                     <div class="card-header"><h3>4. Food & Menu</h3></div>
-                    <div class="info-row"><span class="info-label">Diet Choice</span><span class="info-val"><%= user.diet || 'Vegetarian' %></span></div>
-                    <div class="info-row"><span class="info-label">Breakfast</span><span class="info-val"><%= menu.breakfast %></span></div>
-                    <div class="info-row"><span class="info-label">Lunch</span><span class="info-val"><%= menu.lunch %></span></div>
-                    <div class="info-row"><span class="info-label">Dinner</span><span class="info-val"><%= menu.dinner %></span></div>
+                    <div class="menu-tabs">
+                        <% if (menuList && menuList.length > 0) { %>
+                            <% menuList.forEach((m, idx) => { %>
+                                <button class="tab-btn <%= idx===0 ? 'active' : '' %>" onclick="showDayMenu('<%= m.day %>', '<%= m.breakfast %>', '<%= m.lunch %>', '<%= m.dinner %>', this)"><%= m.day.slice(0,3) %></button>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                    <div class="info-row"><span class="info-label">Breakfast</span><span class="info-val" id="menu-breakfast"><%= menuList[0] ? menuList[0].breakfast : 'Idli Sambar' %></span></div>
+                    <div class="info-row"><span class="info-label">Lunch</span><span class="info-val" id="menu-lunch"><%= menuList[0] ? menuList[0].lunch : 'Special Meals' %></span></div>
+                    <div class="info-row"><span class="info-label">Dinner</span><span class="info-val" id="menu-dinner"><%= menuList[0] ? menuList[0].dinner : 'Chapati Paneer' %></span></div>
                 </div>
             </div>
 
@@ -270,26 +250,20 @@
                             <option value="Cleanliness">Room Cleanliness</option>
                             <option value="Network">WiFi & Network</option>
                         </select>
-                        <textarea name="description" rows="2" placeholder="Describe issue or request..." required></textarea>
+                        <textarea name="description" rows="2" placeholder="Describe request..." required></textarea>
                         <button type="submit" class="btn-action">Submit Request</button>
                     </form>
                 </div>
-                <% if (complaints && complaints.length > 0) { %>
-                    <div class="log-list">
-                        <% complaints.forEach(item => { %>
-                            <div class="log-item">
-                                <span><strong><%= item.category %>:</strong> <%= item.description %></span>
-                                <span class="badge badge-warning"><%= item.status %></span>
-                            </div>
-                        <% }) %>
-                    </div>
-                <% } %>
             </div>
 
-            <!-- 6. Check-In / Check-Out Operations -->
+            <!-- 6. Gate Pass QR Code & Operations -->
             <div class="card">
                 <div>
-                    <div class="card-header"><h3>6. Check-In / Out Operations</h3></div>
+                    <div class="card-header"><h3>6. Digital Gate Pass & Logs</h3></div>
+                    <div class="qr-box">
+                        <div id="qrcode"></div>
+                        <span style="font-size:0.75rem; color:#94a3b8; margin-top:6px;">Scan at Hostel Gate</span>
+                    </div>
                     <form action="/check-log" method="POST">
                         <select name="action">
                             <option value="Check-In">Check-In</option>
@@ -298,84 +272,148 @@
                         <button type="submit" class="btn-action">Record Action</button>
                     </form>
                 </div>
-                <div class="log-list">
-                    <% if (logs && logs.length > 0) { %>
-                        <% logs.forEach(log => { %>
-                            <div class="log-item">
-                                <span><%= log.action %></span>
-                                <span><%= log.timestamp %></span>
-                            </div>
-                        <% }) %>
-                    <% } %>
-                </div>
             </div>
 
         </div>
     </div>
 
-    <!-- 3D Orbiting Sphere Script -->
+    <!-- Floating AI Chat Drawer -->
+    <div class="chat-drawer" id="chat-drawer">
+        <div class="chat-header">
+            <span>🤖 HostelHub AI Assistant</span>
+            <span style="cursor:pointer;" onclick="toggleChat()">✕</span>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="msg msg-bot">Hello <%= user.name %>! I'm your AI assistant. How can I help you with fees, room 204, or the mess menu today?</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chat-msg" placeholder="Ask AI..." onkeypress="handleKey(event)">
+            <button class="btn-action" style="padding: 6px 12px;" onclick="sendAiMsg()">Send</button>
+        </div>
+    </div>
+
+    <!-- Three.js Orbit & Room Scripts -->
     <script>
+        // 1. Top 3D Orbit Canvas
         const canvas = document.getElementById('glass-ai-canvas');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
         camera.position.z = 4.0;
-
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
         renderer.setSize(140, 140);
-        renderer.setPixelRatio(window.devicePixelRatio);
 
-        // Earth Central Sphere
         const earthGeo = new THREE.SphereGeometry(0.85, 32, 32);
         const earthMat = new THREE.MeshPhongMaterial({ color: 0x38bdf8, emissive: 0x0284c7, specular: 0xbae6fd, shininess: 90 });
         const earthMesh = new THREE.Mesh(earthGeo, earthMat);
         scene.add(earthMesh);
 
-        // Outer Glass Shell
-        const glassGeo = new THREE.SphereGeometry(1.05, 32, 32);
-        const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x818cf8, transparent: true, opacity: 0.3, transmission: 0.85 });
-        const glassShell = new THREE.Mesh(glassGeo, glassMat);
-        scene.add(glassShell);
-
-        // Orbit Ring
         const orbitRadius = 1.6;
-        const ringGeo = new THREE.RingGeometry(orbitRadius - 0.015, orbitRadius + 0.015, 64);
-        const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.35 });
-        const orbitRing = new THREE.Mesh(ringGeo, ringMat);
-        orbitRing.rotation.x = Math.PI / 2.3;
-        scene.add(orbitRing);
-
-        // Orbiting Moon
         const moonGeo = new THREE.SphereGeometry(0.2, 24, 24);
-        const moonMat = new THREE.MeshStandardMaterial({ color: 0xc084fc, emissive: 0x9333ea, roughness: 0.3 });
+        const moonMat = new THREE.MeshStandardMaterial({ color: 0xc084fc, emissive: 0x9333ea });
         const moonMesh = new THREE.Mesh(moonGeo, moonMat);
         scene.add(moonMesh);
 
-        // Lighting
-        const pointLight = new THREE.PointLight(0x38bdf8, 3, 10);
-        pointLight.position.set(2, 3, 4);
-        scene.add(pointLight);
+        const light = new THREE.PointLight(0x38bdf8, 3, 10);
+        light.position.set(2, 3, 4);
+        scene.add(light);
         scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 
-        // Animation Loop
         let angle = 0;
         function animate() {
             requestAnimationFrame(animate);
             earthMesh.rotation.y += 0.01;
-            glassShell.rotation.y -= 0.005;
-
             angle += 0.03;
-            const tilt = Math.PI / 2.3;
             moonMesh.position.x = Math.cos(angle) * orbitRadius;
-            moonMesh.position.y = Math.sin(angle) * orbitRadius * Math.sin(tilt);
-            moonMesh.position.z = Math.sin(angle) * orbitRadius * Math.cos(tilt);
-
+            moonMesh.position.y = Math.sin(angle) * orbitRadius * Math.sin(Math.PI / 2.3);
+            moonMesh.position.z = Math.sin(angle) * orbitRadius * Math.cos(Math.PI / 2.3);
             renderer.render(scene, camera);
         }
         animate();
 
-        document.getElementById('ai-orb-btn').addEventListener('click', () => {
-            alert("🤖 HostelHub AI Assistant Activated!\nStatus: Room Allocated (Block A, Room 204)\nMess Bill: Pending (Due 2026-11-01)");
+        // 2. Interactive 3D Room Viewer Canvas
+        const roomCanvas = document.getElementById('room-3d-canvas');
+        const roomScene = new THREE.Scene();
+        const roomCam = new THREE.PerspectiveCamera(45, roomCanvas.clientWidth / 140, 0.1, 1000);
+        roomCam.position.set(3, 3, 4);
+        roomCam.lookAt(0, 0, 0);
+
+        const roomRenderer = new THREE.WebGLRenderer({ canvas: roomCanvas, alpha: true, antialias: true });
+        roomRenderer.setSize(roomCanvas.clientWidth, 140);
+
+        // Room Floor Box
+        const floorGeo = new THREE.BoxGeometry(2.2, 0.1, 2.2);
+        const floorMat = new THREE.MeshLambertMaterial({ color: 0x1e293b });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        roomScene.add(floor);
+
+        // Bed Mesh
+        const bedGeo = new THREE.BoxGeometry(0.8, 0.3, 1.4);
+        const bedMat = new THREE.MeshPhongMaterial({ color: 0x6366f1 });
+        const bed = new THREE.Mesh(bedGeo, bedMat);
+        bed.position.set(-0.5, 0.2, -0.2);
+        roomScene.add(bed);
+
+        roomScene.add(new THREE.AmbientLight(0xffffff, 0.8));
+        const rLight = new THREE.PointLight(0x38bdf8, 2, 10);
+        rLight.position.set(2, 4, 2);
+        roomScene.add(rLight);
+
+        function animateRoom() {
+            requestAnimationFrame(animateRoom);
+            roomScene.rotation.y += 0.008;
+            roomRenderer.render(roomScene, roomCam);
+        }
+        animateRoom();
+
+        // 3. QR Code Generator
+        new QRCode(document.getElementById("qrcode"), {
+            text: "STUDENT:<%= user.email %>|ROOM:204",
+            width: 80,
+            height: 80
         });
+
+        // 4. Menu Day Selector
+        function showDayMenu(day, b, l, d, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('menu-breakfast').innerText = b;
+            document.getElementById('menu-lunch').innerText = l;
+            document.getElementById('menu-dinner').innerText = d;
+        }
+
+        // 5. AI Chatbot Drawer Toggle & Send
+        document.getElementById('ai-orb-btn').addEventListener('click', toggleChat);
+        function toggleChat() {
+            const drawer = document.getElementById('chat-drawer');
+            drawer.style.display = drawer.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function handleKey(e) { if (e.key === 'Enter') sendAiMsg(); }
+
+        async function sendAiMsg() {
+            const input = document.getElementById('chat-msg');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const body = document.getElementById('chat-body');
+            body.innerHTML += `<div class="msg msg-user">${msg}</div>`;
+            input.value = '';
+            body.scrollTop = body.scrollHeight;
+
+            const res = await fetch('/api/ai-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg })
+            });
+            const data = await res.json();
+
+            body.innerHTML += `<div class="msg msg-bot">${data.reply}</div>`;
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function triggerSOS() {
+            alert("🚨 EMERGENCY ALERT SENT!\nLocation: Room 204, Block A.\nCampus security and hostel wardens have been notified.");
+        }
     </script>
 </body>
 </html>

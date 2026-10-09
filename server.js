@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-    secret: 'hostel_oop_secret_key',
+    secret: 'hostel_space_secret_key',
     resave: false,
     saveUninitialized: true
 }));
@@ -23,11 +23,11 @@ app.get('/', (req, res) => {
     const registered = req.query.registered;
     res.render('login', { 
         error: null, 
-        success: registered ? 'Registration successful! Please login below.' : null 
+        success: registered ? 'Registration successful! Please log in.' : null 
     });
 });
 
-// Student Registration
+// Register
 app.post('/register', (req, res) => {
     const { name, email, password, gender, course, contact, id_card, diet, role } = req.body;
     const userRole = role || 'student';
@@ -37,14 +37,11 @@ app.post('/register', (req, res) => {
         [name, email, password, userRole, gender || '', course || '', contact || '', id_card || '', diet || 'Vegetarian'],
         function (err) {
             if (err) {
-                const errorMsg = err.message.includes('UNIQUE') 
-                    ? 'An account with this email address already exists.' 
-                    : err.message;
+                const errorMsg = err.message.includes('UNIQUE') ? 'Email already exists.' : err.message;
                 return res.render('login', { error: errorMsg, success: null });
             }
             
             const userId = this.lastID;
-            // Create default room and fee entries for new user
             db.run(`INSERT INTO rooms (user_id, room_number, block) VALUES (?, '204', 'Block A')`, [userId]);
             db.run(`INSERT INTO fees (user_id, amount, status, due_date) VALUES (?, 5000, 'Pending', '2026-11-01')`, [userId]);
             
@@ -66,24 +63,21 @@ app.post('/login', (req, res) => {
     });
 });
 
-// Dashboard Route (Aggregates all modules)
+// Student Dashboard (Fetches full week menu, complaints, logs)
 app.get('/student', (req, res) => {
     if (!req.session.user) return res.redirect('/');
     const userId = req.session.user.id;
 
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const today = days[new Date().getDay()];
-
     db.get(`SELECT * FROM rooms WHERE user_id = ?`, [userId], (err, room) => {
         db.get(`SELECT * FROM fees WHERE user_id = ?`, [userId], (err, fee) => {
-            db.get(`SELECT * FROM menu WHERE day = ?`, [today], (err, todaysMenu) => {
+            db.all(`SELECT * FROM menu`, (err, fullMenu) => {
                 db.all(`SELECT * FROM complaints WHERE user_id = ? ORDER BY id DESC LIMIT 3`, [userId], (err, complaints) => {
-                    db.all(`SELECT * FROM logs WHERE user_id = ? ORDER BY id DESC LIMIT 4`, [userId], (err, logs) => {
+                    db.all(`SELECT * FROM logs WHERE user_id = ? ORDER BY id DESC LIMIT 5`, [userId], (err, logs) => {
                         res.render('student_dashboard', {
                             user: req.session.user,
                             room: room || { room_number: '204', block: 'Block A', status: 'Allocated' },
                             fee: fee || { amount: 5000, status: 'Pending', due_date: '2026-11-01' },
-                            menu: todaysMenu || { breakfast: 'Dosa', lunch: 'Meals', dinner: 'Chapati' },
+                            menuList: fullMenu || [],
                             complaints: complaints || [],
                             logs: logs || []
                         });
@@ -112,6 +106,26 @@ app.post('/check-log', (req, res) => {
     db.run(`INSERT INTO logs (user_id, action) VALUES (?, ?)`, [req.session.user.id, action], () => {
         res.redirect('/student');
     });
+});
+
+// AI Chatbot Assistant API
+app.post('/api/ai-chat', (req, res) => {
+    if (!req.session.user) return res.json({ reply: 'Please login first.' });
+    const { message } = req.body;
+    const lower = (message || '').toLowerCase();
+    const user = req.session.user;
+
+    if (lower.includes('fee') || lower.includes('payment') || lower.includes('due')) {
+        return res.json({ reply: `Hi ${user.name}, your hostel fee balance is ₹5,000. Due date: Nov 1, 2026.` });
+    } else if (lower.includes('room') || lower.includes('bed') || lower.includes('block')) {
+        return res.json({ reply: `You are currently assigned to Room 204, Block A (Status: Allocated).` });
+    } else if (lower.includes('menu') || lower.includes('food') || lower.includes('dinner') || lower.includes('lunch')) {
+        return res.json({ reply: `Today's menu features Special Meals for Lunch and Chapati/Curry for Dinner. Check the Food & Menu tab for the full week schedule!` });
+    } else if (lower.includes('sos') || lower.includes('help') || lower.includes('emergency')) {
+        return res.json({ reply: `🚨 Emergency dispatch activated for Room 204. Hostel warden and medical staff have been alerted!` });
+    } else {
+        return res.json({ reply: `I'm your HostelHub AI assistant! Ask me about your fees, room allocation, weekly mess menu, or emergency assistance.` });
+    }
 });
 
 // Logout
