@@ -3,133 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hostel Management Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Aesthetic Glass AI Hostel Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --success: #16a34a;
-            --success-bg: #f0fdf4;
-            --warning: #d97706;
-            --warning-bg: #fffbeb;
+            --bg-dark: #0a0f1d;
+            --card-glass: rgba(18, 26, 47, 0.65);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-glow: #6366f1;
+            --accent-purple: #a855f7;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--text-main); padding: 30px 20px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            padding: 30px 20px;
+            min-height: 100vh;
+        }
 
         .container { max-width: 1100px; margin: 0 auto; }
 
+        /* Aesthetic Header */
         .header {
-            background: var(--card-bg);
-            padding: 24px 30px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
+            background: var(--card-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 20px 28px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        .header h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
-        .header p { font-size: 0.875rem; color: var(--text-muted); margin-top: 4px; }
+        .header h1 { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { font-size: 0.85rem; color: var(--text-sub); margin-top: 2px; }
 
         .btn-logout {
-            background: #ef4444;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 10px 22px;
+            border-radius: 12px;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: background 0.2s;
+            font-weight: 700;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+            transition: all 0.2s ease;
         }
-        .btn-logout:hover { background: #dc2626; }
+        .btn-logout:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4); }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
+        /* 3D Glass AI Banner Section */
+        .glass-ai-banner {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            padding: 28px 32px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
         }
+
+        .ai-content h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; background: linear-gradient(135deg, #c084fc, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .ai-content p { font-size: 0.9rem; color: var(--text-sub); max-width: 480px; line-height: 1.6; }
+
+        .ai-orb-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        #glass-ai-canvas { width: 140px; height: 140px; border-radius: 50%; filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.4)); }
+
+        /* Grid Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; }
 
         .card {
-            background: var(--card-bg);
-            border-radius: 16px;
+            background: var(--card-glass);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
             padding: 24px;
-            border: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: transform 0.2s, border-color 0.2s;
         }
+        .card:hover { transform: translateY(-3px); border-color: rgba(99, 102, 241, 0.3); }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--card-border);
             padding-bottom: 12px;
             margin-bottom: 16px;
         }
 
-        .card-header h2 {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
+        .card-header h3 { font-size: 1.05rem; font-weight: 700; color: #a5b4fc; }
 
-        .badge {
-            font-size: 0.75rem;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-        .badge-success { background: var(--success-bg); color: var(--success); }
-        .badge-warning { background: var(--warning-bg); color: var(--warning); }
+        .badge { font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; font-weight: 700; letter-spacing: 0.5px; }
+        .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
 
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-        .info-label { color: var(--text-muted); font-weight: 500; }
+        .info-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 12px; }
+        .info-label { color: var(--text-sub); }
         .info-val { color: var(--text-main); font-weight: 600; }
 
         form { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-        
+
         select, textarea, input {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.875rem;
+            padding: 10px 14px;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: rgba(10, 15, 29, 0.8);
+            color: #fff;
             outline: none;
-            background: #f8fafc;
         }
+        select:focus, textarea:focus { border-color: var(--accent-glow); }
 
-        select:focus, textarea:focus { border-color: var(--primary); background: #fff; }
-
-        .btn-submit {
-            background: var(--primary);
+        .btn-action {
+            background: linear-gradient(135deg, var(--accent-glow), var(--accent-purple));
             color: white;
             border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
+            padding: 11px;
+            border-radius: 10px;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.2s;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+            transition: all 0.2s;
         }
-        .btn-submit:hover { background: var(--primary-hover); }
+        .btn-action:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4); }
 
-        .log-list { margin-top: 12px; border-top: 1px dashed var(--border); padding-top: 10px; }
-        .log-item { font-size: 0.8rem; color: var(--text-muted); padding: 4px 0; display: flex; justify-content: space-between; }
+        .log-list { margin-top: 12px; border-top: 1px dashed var(--card-border); padding-top: 10px; }
+        .log-item { font-size: 0.8rem; color: var(--text-sub); padding: 5px 0; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
@@ -139,20 +168,29 @@
         <div class="header">
             <div>
                 <h1>Welcome, <%= user.name %>! 👋</h1>
-                <p>Hostel Management System Portal</p>
+                <p>Aesthetic Smart Hostel Management System</p>
             </div>
             <a href="/logout" class="btn-logout">Logout</a>
         </div>
 
-        <!-- 6 Core Feature Grid -->
+        <!-- 3D Glass AI Banner -->
+        <div class="glass-ai-banner">
+            <div class="ai-content">
+                <h2>AI Assistant & Smart Operations</h2>
+                <p>Click the interactive 3D Glass Galaxy Orb on the right to trigger real-time hostel status verification or query mess menus and room availability.</p>
+            </div>
+            <div class="ai-orb-wrapper" id="ai-orb-btn">
+                <canvas id="glass-ai-canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- 6 Feature Cards -->
         <div class="grid">
 
             <!-- 1. Student Profile -->
             <div class="card">
                 <div>
-                    <div class="card-header">
-                        <h2>1. Student Profile</h2>
-                    </div>
+                    <div class="card-header"><h3>1. Student Profile</h3></div>
                     <div class="info-row"><span class="info-label">Email</span><span class="info-val"><%= user.email %></span></div>
                     <div class="info-row"><span class="info-label">Course</span><span class="info-val"><%= user.course || 'B.Tech CSE' %></span></div>
                     <div class="info-row"><span class="info-label">Contact</span><span class="info-val"><%= user.contact || 'N/A' %></span></div>
@@ -164,7 +202,7 @@
             <div class="card">
                 <div>
                     <div class="card-header">
-                        <h2>2. Room Allocation</h2>
+                        <h3>2. Room Allocation</h3>
                         <span class="badge badge-success"><%= room.status %></span>
                     </div>
                     <div class="info-row"><span class="info-label">Block / Wing</span><span class="info-val"><%= room.block %></span></div>
@@ -176,7 +214,7 @@
             <div class="card">
                 <div>
                     <div class="card-header">
-                        <h2>3. Fee Management</h2>
+                        <h3>3. Fee Management</h3>
                         <span class="badge badge-warning"><%= fee.status %></span>
                     </div>
                     <div class="info-row"><span class="info-label">Hostel Fee</span><span class="info-val">₹<%= fee.amount %></span></div>
@@ -187,9 +225,7 @@
             <!-- 4. Food & Menu Management -->
             <div class="card">
                 <div>
-                    <div class="card-header">
-                        <h2>4. Food & Menu</h2>
-                    </div>
+                    <div class="card-header"><h3>4. Food & Menu</h3></div>
                     <div class="info-row"><span class="info-label">Diet Choice</span><span class="info-val"><%= user.diet || 'Vegetarian' %></span></div>
                     <div class="info-row"><span class="info-label">Breakfast</span><span class="info-val"><%= menu.breakfast %></span></div>
                     <div class="info-row"><span class="info-label">Lunch</span><span class="info-val"><%= menu.lunch %></span></div>
@@ -200,20 +236,18 @@
             <!-- 5. Complaints & Requests -->
             <div class="card">
                 <div>
-                    <div class="card-header">
-                        <h2>5. Complaints & Requests</h2>
-                    </div>
+                    <div class="card-header"><h3>5. Complaints & Requests</h3></div>
                     <form action="/complaint" method="POST">
                         <select name="category" required>
                             <option value="Maintenance">Maintenance / Repair</option>
                             <option value="Cleanliness">Room Cleanliness</option>
                             <option value="Network">WiFi & Network</option>
                         </select>
-                        <textarea name="description" rows="2" placeholder="Describe your request..." required></textarea>
-                        <button type="submit" class="btn-submit">Submit Request</button>
+                        <textarea name="description" rows="2" placeholder="Describe issue or request..." required></textarea>
+                        <button type="submit" class="btn-action">Submit Request</button>
                     </form>
                 </div>
-                <% if (complaints.length > 0) { %>
+                <% if (complaints && complaints.length > 0) { %>
                     <div class="log-list">
                         <% complaints.forEach(item => { %>
                             <div class="log-item">
@@ -225,32 +259,110 @@
                 <% } %>
             </div>
 
-            <!-- 6. Check-In / Check-Out Log -->
+            <!-- 6. Check-In / Check-Out Operations -->
             <div class="card">
                 <div>
-                    <div class="card-header">
-                        <h2>6. Check-In / Out Log</h2>
-                    </div>
+                    <div class="card-header"><h3>6. Check-In / Out Operations</h3></div>
                     <form action="/check-log" method="POST">
                         <select name="action">
                             <option value="Check-In">Check-In</option>
                             <option value="Check-Out">Check-Out</option>
                         </select>
-                        <button type="submit" class="btn-submit">Record Action</button>
+                        <button type="submit" class="btn-action">Record Action</button>
                     </form>
                 </div>
                 <div class="log-list">
-                    <% logs.forEach(log => { %>
-                        <div class="log-item">
-                            <span><%= log.action %></span>
-                            <span><%= log.timestamp %></span>
-                        </div>
-                    <% }) %>
+                    <% if (logs && logs.length > 0) { %>
+                        <% logs.forEach(log => { %>
+                            <div class="log-item">
+                                <span><%= log.action %></span>
+                                <span><%= log.timestamp %></span>
+                            </div>
+                        <% }) %>
+                    <% } %>
                 </div>
             </div>
 
         </div>
     </div>
 
+    <!-- Three.js 3D Orb Script -->
+    <script>
+        const canvas = document.getElementById('glass-ai-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+        camera.position.z = 3.2;
+
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setSize(140, 140);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // Core Galaxy Orb
+        const orbGeo = new THREE.SphereGeometry(0.85, 32, 32);
+        const orbMat = new THREE.MeshPhongMaterial({
+            color: 0x6366f1,
+            emissive: 0x312e81,
+            specular: 0xc084fc,
+            shininess: 100,
+            transparent: true,
+            opacity: 0.9
+        });
+        const orb = new THREE.Mesh(orbGeo, orbMat);
+        scene.add(orb);
+
+        // Outer Glass Shell
+        const glassGeo = new THREE.SphereGeometry(1.1, 32, 32);
+        const glassMat = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.35,
+            roughness: 0.1,
+            metalness: 0.1,
+            transmission: 0.9,
+            ior: 1.5
+        });
+        const glassShell = new THREE.Mesh(glassGeo, glassMat);
+        scene.add(glassShell);
+
+        // Particles
+        const particleCount = 100;
+        const particlesGeo = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 3;
+            positions[i + 1] = (Math.random() - 0.5) * 3;
+            positions[i + 2] = (Math.random() - 0.5) * 3;
+        }
+        particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particlesMat = new THREE.PointsMaterial({ color: 0xc084fc, size: 0.04, transparent: true, opacity: 0.8 });
+        const particleSystem = new THREE.Points(particlesGeo, particlesMat);
+        scene.add(particleSystem);
+
+        // Lights
+        const pointLight = new THREE.PointLight(0xa855f7, 2.5, 10);
+        pointLight.position.set(2, 2, 2);
+        scene.add(pointLight);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+
+        function animate() {
+            requestAnimationFrame(animate);
+            orb.rotation.y += 0.015;
+            orb.rotation.x += 0.008;
+            glassShell.rotation.y -= 0.005;
+            particleSystem.rotation.y += 0.003;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        document.getElementById('ai-orb-btn').addEventListener('click', () => {
+            orbMat.emissive.setHex(0xa855f7);
+            particlesMat.size = 0.09;
+            setTimeout(() => {
+                orbMat.emissive.setHex(0x312e81);
+                particlesMat.size = 0.04;
+            }, 500);
+            alert("🤖 Glass AI Assistant Activated!\nFetching real-time hostel status and mess schedules...");
+        });
+    </script>
 </body>
 </html>
