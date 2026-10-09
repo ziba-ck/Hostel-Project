@@ -3,35 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hostel Portal - 3D Login & Registration</title>
+    <title>HostelHub - AI Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .card { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); padding: 30px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; max-width: 400px; box-shadow: 0 8px 32px rgba(0,0,0,0.37); }
-        h2 { text-align: center; color: #a5b4fc; margin-bottom: 10px; }
-        h3 { color: #f8fafc; margin-top: 20px; font-size: 1.1em; }
-        
-        .ai-3d-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; cursor: pointer; }
-        #glass-ai-canvas { width: 120px; height: 120px; border-radius: 50%; }
-        
-        .error-msg { color: #f87171; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-bottom: 15px; text-align: center; }
-        .success-msg { color: #4ade80; background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-bottom: 15px; text-align: center; }
-        .input-group { margin-bottom: 12px; }
-        input, select { width: 100%; padding: 10px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #fff; font-size: 0.95em; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #6366f1; border: none; color: white; border-radius: 6px; font-size: 1em; font-weight: bold; cursor: pointer; margin-top: 8px; }
-        button:hover { background-color: #4f46e5; }
-        hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 20px 0; }
+        :root {
+            --bg-space: #030712;
+            --purple-glow: #6366f1;
+            --blue-gradient: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+            --card-glass: rgba(15, 23, 42, 0.75);
+            --border-glass: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background-color: var(--bg-space);
+            background-image: 
+                radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.18) 0%, transparent 60%),
+                radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.12) 0%, transparent 50%);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        .space-container {
+            width: 100%;
+            max-width: 520px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 3D Glass Badge Canvas Wrapper */
+        .glass-badge-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px auto;
+            cursor: pointer;
+        }
+
+        #glass-h-canvas {
+            width: 140px;
+            height: 140px;
+            filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.6));
+        }
+
+        .badge-tag {
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #38bdf8;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        h1 .highlight {
+            background: var(--blue-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: #94a3b8;
+            max-width: 440px;
+            margin: 0 auto 30px auto;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* Glass Form Cards */
+        .glass-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .form-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .input-group { margin-bottom: 14px; }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(3, 7, 18, 0.6);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #818cf8;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-enter {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border: none;
+            color: white;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-enter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+        }
+
+        .footer-tag {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 20px;
+        }
+
+        .error-msg { color: #f87171; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 15px; text-align: center; }
+        .success-msg { color: #4ade80; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); padding: 10px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 15px; text-align: center; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <!-- 3D Glass AI Banner -->
-        <div class="ai-3d-wrapper">
-            <canvas id="glass-ai-canvas"></canvas>
-            <span style="font-size: 0.8em; color: #a5b4fc; font-weight: bold; margin-top: 4px;">GLASS AI PORTAL</span>
+
+    <div class="space-container">
+        <!-- 3D Glass H Badge -->
+        <div class="glass-badge-wrapper" id="badge-btn">
+            <canvas id="glass-h-canvas"></canvas>
         </div>
 
-        <h2>Hostel Portal Login</h2>
+        <div class="badge-tag">✦ AI HOSTEL MANAGEMENT MADE SIMPLE</div>
+        <h1>Welcome to <span class="highlight">HostelHub</span></h1>
+        <p class="subtitle">Your simple, friendly space to manage rooms, fees, food, complaints and student services.</p>
 
         <% if (locals.error && error) { %>
             <div class="error-msg"><%= error %></div>
@@ -41,86 +179,142 @@
             <div class="success-msg"><%= success %></div>
         <% } %>
 
-        <form action="/login" method="POST">
-            <div class="input-group">
-                <input type="email" name="email" placeholder="Email Address" required>
-            </div>
-            <div class="input-group">
-                <input type="password" name="password" placeholder="Password" required>
-            </div>
-            <button type="submit">Sign In</button>
-        </form>
+        <!-- Login Card -->
+        <div class="glass-card">
+            <div class="form-title">Enter HostelHub</div>
+            <form action="/login" method="POST">
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn-enter">Enter HostelHub →</button>
+            </form>
+        </div>
 
-        <hr>
+        <!-- Registration Card -->
+        <div class="glass-card">
+            <div class="form-title">Student Registration</div>
+            <form action="/register" method="POST">
+                <input type="hidden" name="role" value="student">
+                <div class="input-group">
+                    <input type="text" name="name" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <div class="input-group">
+                    <select name="gender" required>
+                        <option value="" disabled selected>Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <input type="text" name="course" placeholder="Course (e.g. B.Tech CSE)" required>
+                </div>
+                <div class="input-group">
+                    <input type="tel" name="contact" placeholder="Contact Number" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" name="id_card" placeholder="ID Card / Verification No." required>
+                </div>
+                <div class="input-group">
+                    <select name="diet" required>
+                        <option value="Vegetarian">Vegetarian</option>
+                        <option value="Non-Vegetarian">Non-Vegetarian</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-enter">Create Student Account</button>
+            </form>
+        </div>
 
-        <h3>Student Registration</h3>
-        <form action="/register" method="POST">
-            <input type="hidden" name="role" value="student">
-            <div class="input-group">
-                <input type="text" name="name" placeholder="Full Name" required>
-            </div>
-            <div class="input-group">
-                <input type="email" name="email" placeholder="Email" required>
-            </div>
-            <div class="input-group">
-                <input type="password" name="password" placeholder="Password" required>
-            </div>
-            <div class="input-group">
-                <select name="gender" required>
-                    <option value="" disabled selected>Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <input type="text" name="course" placeholder="Course (e.g. B.Tech CSE)" required>
-            </div>
-            <div class="input-group">
-                <input type="tel" name="contact" placeholder="Contact Number" required>
-            </div>
-            <div class="input-group">
-                <input type="text" name="id_card" placeholder="ID Card / Verification No." required>
-            </div>
-            <div class="input-group">
-                <select name="diet" required>
-                    <option value="Vegetarian">Vegetarian</option>
-                    <option value="Non-Vegetarian">Non-Vegetarian</option>
-                </select>
-            </div>
-            <button type="submit">Register Profile</button>
-        </form>
+        <div class="footer-tag">Secure • Simple • Student-friendly</div>
     </div>
 
+    <!-- Three.js 3D Glowing H Glass Badge Script -->
     <script>
-        const canvas = document.getElementById('glass-ai-canvas');
+        const canvas = document.getElementById('glass-h-canvas');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
-        camera.position.z = 3.2;
+        camera.position.z = 3.5;
 
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-        renderer.setSize(120, 120);
+        renderer.setSize(140, 140);
         renderer.setPixelRatio(window.devicePixelRatio);
 
-        const orbGeo = new THREE.SphereGeometry(0.8, 32, 32);
-        const orbMat = new THREE.MeshPhongMaterial({ color: 0x6366f1, emissive: 0x312e81, transparent: true, opacity: 0.9 });
+        // Rounded Box Frame (Glass)
+        const roundedBoxGroup = new THREE.Group();
+
+        const boxGeo = new THREE.BoxGeometry(1.6, 1.6, 0.4);
+        const glassMat = new THREE.MeshPhysicalMaterial({
+            color: 0x38bdf8,
+            transparent: true,
+            opacity: 0.4,
+            roughness: 0.1,
+            metalness: 0.1,
+            transmission: 0.85,
+            ior: 1.4
+        });
+        const glassBox = new THREE.Mesh(boxGeo, glassMat);
+        roundedBoxGroup.add(glassBox);
+
+        // Core Glowing Orb Behind 'H'
+        const orbGeo = new THREE.SphereGeometry(0.65, 32, 32);
+        const orbMat = new THREE.MeshPhongMaterial({
+            color: 0x3b82f6,
+            emissive: 0x1d4ed8,
+            specular: 0x60a5fa,
+            shininess: 80
+        });
         const orb = new THREE.Mesh(orbGeo, orbMat);
-        scene.add(orb);
+        orb.position.z = -0.05;
+        roundedBoxGroup.add(orb);
 
-        const glassGeo = new THREE.SphereGeometry(1.05, 32, 32);
-        const glassMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.3, transmission: 0.9 });
-        const glassShell = new THREE.Mesh(glassGeo, glassMat);
-        scene.add(glassShell);
+        // Canvas Text 'H' Texture
+        const textCanvas = document.createElement('canvas');
+        textCanvas.width = 256;
+        textCanvas.height = 256;
+        const ctx = textCanvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 160px "Plus Jakarta Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('H', 128, 128);
 
-        const pointLight = new THREE.PointLight(0xa855f7, 2, 10);
-        pointLight.position.set(2, 2, 2);
+        const textTexture = new THREE.CanvasTexture(textCanvas);
+        const textGeo = new THREE.PlaneGeometry(1.1, 1.1);
+        const textMat = new THREE.MeshBasicMaterial({
+            map: textTexture,
+            transparent: true
+        });
+        const textMesh = new THREE.Mesh(textGeo, textMat);
+        textMesh.position.z = 0.22;
+        roundedBoxGroup.add(textMesh);
+
+        scene.add(roundedBoxGroup);
+
+        // Ambient & Point Lighting
+        const pointLight = new THREE.PointLight(0x38bdf8, 3, 10);
+        pointLight.position.set(2, 2, 3);
         scene.add(pointLight);
-        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+        scene.add(new THREE.AmbientLight(0xffffff, 0.7));
 
+        // Floating animation
+        let clock = new THREE.Clock();
         function animate() {
             requestAnimationFrame(animate);
-            orb.rotation.y += 0.015;
-            glassShell.rotation.y -= 0.005;
+            const elapsedTime = clock.getElapsedTime();
+            
+            roundedBoxGroup.rotation.y = Math.sin(elapsedTime * 0.8) * 0.15;
+            roundedBoxGroup.rotation.x = Math.cos(elapsedTime * 0.6) * 0.1;
+            roundedBoxGroup.position.y = Math.sin(elapsedTime * 1.5) * 0.05;
+
             renderer.render(scene, camera);
         }
         animate();
