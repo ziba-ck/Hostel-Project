@@ -3,23 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hostel Portal Login & Registration</title>
+    <title>Hostel Portal - 3D Login & Registration</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .card { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); width: 100%; max-width: 400px; }
-        h2 { text-align: center; color: #4a40d4; margin-bottom: 20px; }
-        h3 { color: #111; margin-top: 25px; font-size: 1.1em; }
-        .error-msg { color: #d9534f; background: #f8d7da; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-bottom: 15px; text-align: center; }
-        .success-msg { color: #155724; background: #d4edda; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-bottom: 15px; text-align: center; }
+        body { font-family: Arial, sans-serif; background-color: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .card { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); padding: 30px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; max-width: 400px; box-shadow: 0 8px 32px rgba(0,0,0,0.37); }
+        h2 { text-align: center; color: #a5b4fc; margin-bottom: 10px; }
+        h3 { color: #f8fafc; margin-top: 20px; font-size: 1.1em; }
+        
+        .ai-3d-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; cursor: pointer; }
+        #glass-ai-canvas { width: 120px; height: 120px; border-radius: 50%; }
+        
+        .error-msg { color: #f87171; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-bottom: 15px; text-align: center; }
+        .success-msg { color: #4ade80; background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-bottom: 15px; text-align: center; }
         .input-group { margin-bottom: 12px; }
-        input, select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 0.95em; }
-        button { width: 100%; padding: 12px; background-color: #4a40d4; border: none; color: white; border-radius: 6px; font-size: 1em; font-weight: bold; cursor: pointer; margin-top: 8px; }
-        button:hover { background-color: #3830b3; }
-        hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
+        input, select { width: 100%; padding: 10px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #fff; font-size: 0.95em; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #6366f1; border: none; color: white; border-radius: 6px; font-size: 1em; font-weight: bold; cursor: pointer; margin-top: 8px; }
+        button:hover { background-color: #4f46e5; }
+        hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 20px 0; }
     </style>
 </head>
 <body>
     <div class="card">
+        <!-- 3D Glass AI Banner -->
+        <div class="ai-3d-wrapper">
+            <canvas id="glass-ai-canvas"></canvas>
+            <span style="font-size: 0.8em; color: #a5b4fc; font-weight: bold; margin-top: 4px;">GLASS AI PORTAL</span>
+        </div>
+
         <h2>Hostel Portal Login</h2>
 
         <% if (locals.error && error) { %>
@@ -30,7 +41,6 @@
             <div class="success-msg"><%= success %></div>
         <% } %>
 
-        <!-- Login Form -->
         <form action="/login" method="POST">
             <div class="input-group">
                 <input type="email" name="email" placeholder="Email Address" required>
@@ -43,7 +53,6 @@
 
         <hr>
 
-        <!-- Student Registration Form -->
         <h3>Student Registration</h3>
         <form action="/register" method="POST">
             <input type="hidden" name="role" value="student">
@@ -82,5 +91,39 @@
             <button type="submit">Register Profile</button>
         </form>
     </div>
+
+    <script>
+        const canvas = document.getElementById('glass-ai-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+        camera.position.z = 3.2;
+
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setSize(120, 120);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        const orbGeo = new THREE.SphereGeometry(0.8, 32, 32);
+        const orbMat = new THREE.MeshPhongMaterial({ color: 0x6366f1, emissive: 0x312e81, transparent: true, opacity: 0.9 });
+        const orb = new THREE.Mesh(orbGeo, orbMat);
+        scene.add(orb);
+
+        const glassGeo = new THREE.SphereGeometry(1.05, 32, 32);
+        const glassMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.3, transmission: 0.9 });
+        const glassShell = new THREE.Mesh(glassGeo, glassMat);
+        scene.add(glassShell);
+
+        const pointLight = new THREE.PointLight(0xa855f7, 2, 10);
+        pointLight.position.set(2, 2, 2);
+        scene.add(pointLight);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+
+        function animate() {
+            requestAnimationFrame(animate);
+            orb.rotation.y += 0.015;
+            glassShell.rotation.y -= 0.005;
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
 </body>
 </html>
