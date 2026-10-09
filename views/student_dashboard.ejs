@@ -3,29 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aesthetic Glass AI Hostel Portal</title>
+    <title>HostelHub - Student Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
-            --bg-dark: #0a0f1d;
-            --card-glass: rgba(18, 26, 47, 0.65);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --accent-glow: #6366f1;
-            --accent-purple: #a855f7;
+            --bg-space: #030712;
+            --purple-glow: #6366f1;
+            --blue-gradient: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+            --card-glass: rgba(15, 23, 42, 0.7);
+            --border-glass: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
-            --success: #10b981;
-            --warning: #f59e0b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-        
+
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-space);
             background-image: 
-                radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 90% 80%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.18) 0%, transparent 50%),
+                radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
             color: var(--text-main);
             padding: 30px 20px;
             min-height: 100vh;
@@ -33,22 +31,29 @@
 
         .container { max-width: 1100px; margin: 0 auto; }
 
-        /* Aesthetic Header */
+        /* Header */
         .header {
             background: var(--card-glass);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             padding: 20px 28px;
             border-radius: 20px;
-            border: 1px solid var(--card-border);
+            border: 1px solid var(--border-glass);
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
 
-        .header h1 { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--blue-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
         .header p { font-size: 0.85rem; color: var(--text-sub); margin-top: 2px; }
 
         .btn-logout {
@@ -59,28 +64,37 @@
             text-decoration: none;
             font-weight: 700;
             font-size: 0.85rem;
-            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            transition: all 0.2s;
         }
-        .btn-logout:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4); }
+        .btn-logout:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); }
 
-        /* 3D Glass AI Banner Section */
+        /* AI Banner */
         .glass-ai-banner {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
+            background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 24px;
-            padding: 28px 32px;
+            padding: 24px 32px;
             margin-bottom: 28px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
         }
 
-        .ai-content h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; background: linear-gradient(135deg, #c084fc, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .ai-content h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #c084fc, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
         .ai-content p { font-size: 0.9rem; color: var(--text-sub); max-width: 480px; line-height: 1.6; }
 
         .ai-orb-wrapper {
@@ -92,38 +106,50 @@
             align-items: center;
             cursor: pointer;
         }
-        #glass-ai-canvas { width: 140px; height: 140px; border-radius: 50%; filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.4)); }
 
-        /* Grid Cards */
+        #glass-ai-canvas {
+            width: 140px;
+            height: 140px;
+            filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.5));
+        }
+
+        /* Cards Grid */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; }
 
         .card {
             background: var(--card-glass);
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 24px;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-glass);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.2s, border-color 0.2s;
+            transition: all 0.2s;
         }
-        .card:hover { transform: translateY(-3px); border-color: rgba(99, 102, 241, 0.3); }
+        .card:hover { transform: translateY(-3px); border-color: rgba(129, 140, 248, 0.3); }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--border-glass);
             padding-bottom: 12px;
             margin-bottom: 16px;
         }
 
         .card-header h3 { font-size: 1.05rem; font-weight: 700; color: #a5b4fc; }
 
-        .badge { font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; font-weight: 700; letter-spacing: 0.5px; }
-        .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .badge-success { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
         .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
 
         .info-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 12px; }
@@ -135,29 +161,30 @@
         select, textarea, input {
             width: 100%;
             padding: 10px 14px;
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
             font-size: 0.85rem;
-            background: rgba(10, 15, 29, 0.8);
+            background: rgba(3, 7, 18, 0.7);
             color: #fff;
             outline: none;
-        }
-        select:focus, textarea:focus { border-color: var(--accent-glow); }
-
-        .btn-action {
-            background: linear-gradient(135deg, var(--accent-glow), var(--accent-purple));
-            color: white;
-            border: none;
-            padding: 11px;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
             transition: all 0.2s;
         }
-        .btn-action:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4); }
+        select:focus, textarea:focus { border-color: #818cf8; box-shadow: 0 0 10px rgba(99, 102, 241, 0.3); }
 
-        .log-list { margin-top: 12px; border-top: 1px dashed var(--card-border); padding-top: 10px; }
+        .btn-action {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            transition: all 0.2s;
+        }
+        .btn-action:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5); }
+
+        .log-list { margin-top: 12px; border-top: 1px dashed var(--border-glass); padding-top: 10px; }
         .log-item { font-size: 0.8rem; color: var(--text-sub); padding: 5px 0; display: flex; justify-content: space-between; }
     </style>
 </head>
@@ -168,23 +195,23 @@
         <div class="header">
             <div>
                 <h1>Welcome, <%= user.name %>! 👋</h1>
-                <p>Aesthetic Smart Hostel Management System</p>
+                <p>HostelHub Space Management System</p>
             </div>
             <a href="/logout" class="btn-logout">Logout</a>
         </div>
 
-        <!-- 3D Glass AI Banner -->
+        <!-- 3D AI Banner -->
         <div class="glass-ai-banner">
             <div class="ai-content">
                 <h2>AI Assistant & Smart Operations</h2>
-                <p>Click the interactive 3D Glass Galaxy Orb on the right to trigger real-time hostel status verification or query mess menus and room availability.</p>
+                <p>Click the 3D Orbiting Sphere to check real-time hostel verification, mess schedules, and automated balance checks.</p>
             </div>
             <div class="ai-orb-wrapper" id="ai-orb-btn">
                 <canvas id="glass-ai-canvas"></canvas>
             </div>
         </div>
 
-        <!-- 6 Feature Cards -->
+        <!-- 6 Core Feature Grid -->
         <div class="grid">
 
             <!-- 1. Student Profile -->
@@ -286,82 +313,68 @@
         </div>
     </div>
 
-    <!-- Three.js 3D Orb Script -->
+    <!-- 3D Orbiting Sphere Script -->
     <script>
         const canvas = document.getElementById('glass-ai-canvas');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
-        camera.position.z = 3.2;
+        camera.position.z = 4.0;
 
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
         renderer.setSize(140, 140);
         renderer.setPixelRatio(window.devicePixelRatio);
 
-        // Core Galaxy Orb
-        const orbGeo = new THREE.SphereGeometry(0.85, 32, 32);
-        const orbMat = new THREE.MeshPhongMaterial({
-            color: 0x6366f1,
-            emissive: 0x312e81,
-            specular: 0xc084fc,
-            shininess: 100,
-            transparent: true,
-            opacity: 0.9
-        });
-        const orb = new THREE.Mesh(orbGeo, orbMat);
-        scene.add(orb);
+        // Earth Central Sphere
+        const earthGeo = new THREE.SphereGeometry(0.85, 32, 32);
+        const earthMat = new THREE.MeshPhongMaterial({ color: 0x38bdf8, emissive: 0x0284c7, specular: 0xbae6fd, shininess: 90 });
+        const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+        scene.add(earthMesh);
 
         // Outer Glass Shell
-        const glassGeo = new THREE.SphereGeometry(1.1, 32, 32);
-        const glassMat = new THREE.MeshPhysicalMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.35,
-            roughness: 0.1,
-            metalness: 0.1,
-            transmission: 0.9,
-            ior: 1.5
-        });
+        const glassGeo = new THREE.SphereGeometry(1.05, 32, 32);
+        const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x818cf8, transparent: true, opacity: 0.3, transmission: 0.85 });
         const glassShell = new THREE.Mesh(glassGeo, glassMat);
         scene.add(glassShell);
 
-        // Particles
-        const particleCount = 100;
-        const particlesGeo = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
-        for (let i = 0; i < particleCount * 3; i += 3) {
-            positions[i] = (Math.random() - 0.5) * 3;
-            positions[i + 1] = (Math.random() - 0.5) * 3;
-            positions[i + 2] = (Math.random() - 0.5) * 3;
-        }
-        particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const particlesMat = new THREE.PointsMaterial({ color: 0xc084fc, size: 0.04, transparent: true, opacity: 0.8 });
-        const particleSystem = new THREE.Points(particlesGeo, particlesMat);
-        scene.add(particleSystem);
+        // Orbit Ring
+        const orbitRadius = 1.6;
+        const ringGeo = new THREE.RingGeometry(orbitRadius - 0.015, orbitRadius + 0.015, 64);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.35 });
+        const orbitRing = new THREE.Mesh(ringGeo, ringMat);
+        orbitRing.rotation.x = Math.PI / 2.3;
+        scene.add(orbitRing);
 
-        // Lights
-        const pointLight = new THREE.PointLight(0xa855f7, 2.5, 10);
-        pointLight.position.set(2, 2, 2);
+        // Orbiting Moon
+        const moonGeo = new THREE.SphereGeometry(0.2, 24, 24);
+        const moonMat = new THREE.MeshStandardMaterial({ color: 0xc084fc, emissive: 0x9333ea, roughness: 0.3 });
+        const moonMesh = new THREE.Mesh(moonGeo, moonMat);
+        scene.add(moonMesh);
+
+        // Lighting
+        const pointLight = new THREE.PointLight(0x38bdf8, 3, 10);
+        pointLight.position.set(2, 3, 4);
         scene.add(pointLight);
         scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 
+        // Animation Loop
+        let angle = 0;
         function animate() {
             requestAnimationFrame(animate);
-            orb.rotation.y += 0.015;
-            orb.rotation.x += 0.008;
+            earthMesh.rotation.y += 0.01;
             glassShell.rotation.y -= 0.005;
-            particleSystem.rotation.y += 0.003;
+
+            angle += 0.03;
+            const tilt = Math.PI / 2.3;
+            moonMesh.position.x = Math.cos(angle) * orbitRadius;
+            moonMesh.position.y = Math.sin(angle) * orbitRadius * Math.sin(tilt);
+            moonMesh.position.z = Math.sin(angle) * orbitRadius * Math.cos(tilt);
+
             renderer.render(scene, camera);
         }
         animate();
 
         document.getElementById('ai-orb-btn').addEventListener('click', () => {
-            orbMat.emissive.setHex(0xa855f7);
-            particlesMat.size = 0.09;
-            setTimeout(() => {
-                orbMat.emissive.setHex(0x312e81);
-                particlesMat.size = 0.04;
-            }, 500);
-            alert("🤖 Glass AI Assistant Activated!\nFetching real-time hostel status and mess schedules...");
+            alert("🤖 HostelHub AI Assistant Activated!\nStatus: Room Allocated (Block A, Room 204)\nMess Bill: Pending (Due 2026-11-01)");
         });
     </script>
 </body>
