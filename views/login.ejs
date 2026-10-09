@@ -20,8 +20,8 @@
         body {
             background-color: var(--bg-space);
             background-image: 
-                radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.18) 0%, transparent 60%),
-                radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.12) 0%, transparent 50%);
+                radial-gradient(circle at 50% 25%, rgba(99, 102, 241, 0.22) 0%, transparent 60%),
+                radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
             color: #f8fafc;
             min-height: 100vh;
             display: flex;
@@ -39,19 +39,21 @@
             z-index: 2;
         }
 
-        /* 3D Glass Badge Canvas Wrapper */
+        /* 3D Canvas Container */
         .glass-badge-wrapper {
             position: relative;
-            width: 140px;
-            height: 140px;
-            margin: 0 auto 20px auto;
-            cursor: pointer;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 10px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #glass-h-canvas {
-            width: 140px;
-            height: 140px;
-            filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.6));
+            width: 220px;
+            height: 220px;
+            filter: drop-shadow(0 0 30px rgba(56, 189, 248, 0.5));
         }
 
         .badge-tag {
@@ -78,7 +80,7 @@
         }
 
         .subtitle {
-            font-size: 1.05rem;
+            font-size: 1rem;
             color: #94a3b8;
             max-width: 440px;
             margin: 0 auto 30px auto;
@@ -149,12 +151,7 @@
             box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
         }
 
-        .footer-tag {
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-top: 20px;
-        }
-
+        .footer-tag { font-size: 0.85rem; color: #64748b; margin-top: 20px; }
         .error-msg { color: #f87171; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 15px; text-align: center; }
         .success-msg { color: #4ade80; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); padding: 10px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 15px; text-align: center; }
     </style>
@@ -162,8 +159,8 @@
 <body>
 
     <div class="space-container">
-        <!-- 3D Glass H Badge -->
-        <div class="glass-badge-wrapper" id="badge-btn">
+        <!-- 3D Earth & Orbiting Moon Canvas -->
+        <div class="glass-badge-wrapper">
             <canvas id="glass-h-canvas"></canvas>
         </div>
 
@@ -179,7 +176,7 @@
             <div class="success-msg"><%= success %></div>
         <% } %>
 
-        <!-- Login Card -->
+        <!-- Login Form -->
         <div class="glass-card">
             <div class="form-title">Enter HostelHub</div>
             <form action="/login" method="POST">
@@ -193,7 +190,7 @@
             </form>
         </div>
 
-        <!-- Registration Card -->
+        <!-- Registration Form -->
         <div class="glass-card">
             <div class="form-title">Student Registration</div>
             <form action="/register" method="POST">
@@ -237,83 +234,90 @@
         <div class="footer-tag">Secure • Simple • Student-friendly</div>
     </div>
 
-    <!-- Three.js 3D Glowing H Glass Badge Script -->
+    <!-- Three.js Orbiting System Script -->
     <script>
         const canvas = document.getElementById('glass-h-canvas');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
-        camera.position.z = 3.5;
+        camera.position.z = 4.2;
 
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-        renderer.setSize(140, 140);
+        renderer.setSize(220, 220);
         renderer.setPixelRatio(window.devicePixelRatio);
 
-        // Rounded Box Frame (Glass)
-        const roundedBoxGroup = new THREE.Group();
-
-        const boxGeo = new THREE.BoxGeometry(1.6, 1.6, 0.4);
-        const glassMat = new THREE.MeshPhysicalMaterial({
+        // 1. Central Glowing Earth Sphere
+        const earthGeo = new THREE.SphereGeometry(0.85, 32, 32);
+        const earthMat = new THREE.MeshPhongMaterial({
             color: 0x38bdf8,
+            emissive: 0x0284c7,
+            specular: 0xbae6fd,
+            shininess: 90
+        });
+        const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+        scene.add(earthMesh);
+
+        // 2. Glass Atmosphere Shell
+        const glassGeo = new THREE.SphereGeometry(1.05, 32, 32);
+        const glassMat = new THREE.MeshPhysicalMaterial({
+            color: 0x818cf8,
             transparent: true,
-            opacity: 0.4,
+            opacity: 0.3,
             roughness: 0.1,
             metalness: 0.1,
-            transmission: 0.85,
-            ior: 1.4
+            transmission: 0.85
         });
-        const glassBox = new THREE.Mesh(boxGeo, glassMat);
-        roundedBoxGroup.add(glassBox);
+        const glassShell = new THREE.Mesh(glassGeo, glassMat);
+        scene.add(glassShell);
 
-        // Core Glowing Orb Behind 'H'
-        const orbGeo = new THREE.SphereGeometry(0.65, 32, 32);
-        const orbMat = new THREE.MeshPhongMaterial({
-            color: 0x3b82f6,
-            emissive: 0x1d4ed8,
-            specular: 0x60a5fa,
-            shininess: 80
+        // 3. Circular Orbit Ring Line
+        const orbitRadius = 1.7;
+        const ringGeo = new THREE.RingGeometry(orbitRadius - 0.015, orbitRadius + 0.015, 64);
+        const ringMat = new THREE.MeshBasicMaterial({
+            color: 0x38bdf8,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.35
         });
-        const orb = new THREE.Mesh(orbGeo, orbMat);
-        orb.position.z = -0.05;
-        roundedBoxGroup.add(orb);
+        const orbitRing = new THREE.Mesh(ringGeo, ringMat);
+        orbitRing.rotation.x = Math.PI / 2.3; // Tilt orbit line
+        scene.add(orbitRing);
 
-        // Canvas Text 'H' Texture
-        const textCanvas = document.createElement('canvas');
-        textCanvas.width = 256;
-        textCanvas.height = 256;
-        const ctx = textCanvas.getContext('2d');
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '900 160px "Plus Jakarta Sans", sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('H', 128, 128);
-
-        const textTexture = new THREE.CanvasTexture(textCanvas);
-        const textGeo = new THREE.PlaneGeometry(1.1, 1.1);
-        const textMat = new THREE.MeshBasicMaterial({
-            map: textTexture,
-            transparent: true
+        // 4. Orbiting Moon Sphere
+        const moonGeo = new THREE.SphereGeometry(0.2, 24, 24);
+        const moonMat = new THREE.MeshStandardMaterial({
+            color: 0xc084fc,
+            emissive: 0x9333ea,
+            roughness: 0.3
         });
-        const textMesh = new THREE.Mesh(textGeo, textMat);
-        textMesh.position.z = 0.22;
-        roundedBoxGroup.add(textMesh);
+        const moonMesh = new THREE.Mesh(moonGeo, moonMat);
+        scene.add(moonMesh);
 
-        scene.add(roundedBoxGroup);
-
-        // Ambient & Point Lighting
+        // Lighting
         const pointLight = new THREE.PointLight(0x38bdf8, 3, 10);
-        pointLight.position.set(2, 2, 3);
+        pointLight.position.set(2, 3, 4);
         scene.add(pointLight);
-        scene.add(new THREE.AmbientLight(0xffffff, 0.7));
 
-        // Floating animation
-        let clock = new THREE.Clock();
+        const purpleLight = new THREE.PointLight(0xc084fc, 2, 8);
+        purpleLight.position.set(-2, -2, 2);
+        scene.add(purpleLight);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+
+        // Animation Loop (Circling Orbit)
+        let angle = 0;
         function animate() {
             requestAnimationFrame(animate);
-            const elapsedTime = clock.getElapsedTime();
-            
-            roundedBoxGroup.rotation.y = Math.sin(elapsedTime * 0.8) * 0.15;
-            roundedBoxGroup.rotation.x = Math.cos(elapsedTime * 0.6) * 0.1;
-            roundedBoxGroup.position.y = Math.sin(elapsedTime * 1.5) * 0.05;
+
+            // Self-rotation of Earth
+            earthMesh.rotation.y += 0.01;
+            glassShell.rotation.y -= 0.005;
+
+            // Calculate Circular Orbit position
+            angle += 0.03;
+            const tilt = Math.PI / 2.3;
+            moonMesh.position.x = Math.cos(angle) * orbitRadius;
+            moonMesh.position.y = Math.sin(angle) * orbitRadius * Math.sin(tilt);
+            moonMesh.position.z = Math.sin(angle) * orbitRadius * Math.cos(tilt);
 
             renderer.render(scene, camera);
         }
